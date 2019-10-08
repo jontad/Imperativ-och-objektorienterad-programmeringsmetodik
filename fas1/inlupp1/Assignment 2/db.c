@@ -7,10 +7,10 @@
 
 struct item
 {
-char *Name;
-char *Desc;
-int Price;
-char *Shelf;
+  char *Name;
+  char *Desc;
+  int Price;
+  char *Shelf;
 };
 
 
@@ -18,7 +18,7 @@ char *Shelf;
 item_t make_item(char *input_name, char *input_desc, int input_price, char *input_shelf)
 {
   item_t item = {item.Name = input_name, item.Desc = input_desc, item.Price = input_price, item.Shelf = input_shelf};
-    return item;
+  return item;
 }
 
 
@@ -41,13 +41,6 @@ bool is_shelf(char *string)
 	}
     }
   return a;
-}
-
-
-char *ask_question_shelf(char *question)
-{
-  answer_t answer = ask_question(question, is_shelf, (convert_func) strdup);
-  return answer.string_value;
 }
 
 
