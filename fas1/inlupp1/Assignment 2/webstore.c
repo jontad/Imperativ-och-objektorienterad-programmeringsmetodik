@@ -19,6 +19,8 @@ struct merchandise
 };
 
 
+
+
 merch_t input_merch()
 {
   merch_t merch;
@@ -30,6 +32,7 @@ merch_t input_merch()
   
   return merch;
 }
+
 
 static char *location_of_merch(int no_merch)
 {
@@ -63,6 +66,9 @@ static char *location_of_merch(int no_merch)
   return merch.Location;  
 }
 
+
+
+
 static merch_t add_merch_aux(char *name, int no_items)
 {
   merch_t merch;
@@ -77,19 +83,21 @@ static merch_t add_merch_aux(char *name, int no_items)
 
 static bool name_compare(merch_t *merch, char *name, int no_merch)
 {
- for(int i = 0; i < no_merch; ++i)
+  for(int i = 0; i < no_merch; ++i)
     {
       if(strcmp(name, merch[i].Name) == 0) return true;
     }
- return false;
+  return false;
 }
 
 int ioopm_add_merch(merch_t *merch, int no_merch)
 {
   char *name = ask_question_string("Name of merchandise:");
-  if(input_compare(merch, name, no_items))  return no_items;
-  
-  
+  if(name_compare(merch, name, no_merch))
+    {    
+      puts("Merch already in stock");
+      return no_merch;
+    }
   
   merch[no_merch] = add_merch_aux(name, no_merch);
   ++no_merch;
@@ -97,12 +105,32 @@ int ioopm_add_merch(merch_t *merch, int no_merch)
   return no_merch;
 }
 
+static int strcompare(const void *merch1, const void *merch2)
+{
+  return strcmp(*(char * const) merch1,*(char * const) merch2);
+}
+
+static void sort_merch(merch_t *merch, int no_merch)
+{
+  char *merch_to_sort = merch.Name;
+  qsort(merch_to_sort, no_merch,strcompare);
+}
+
+
+
 void ioopm_list_merch(merch_t *merch, int no_merch)
 {
+  sort_merch(merch, no_merch);
+  
   for(int i = 1; i  <= no_merch; ++i)
     {
-
+      
       printf("%d. %s\n",i,merch[i-1].Name);
+      if((no_merch % 20) == 0)
+	{
+	  char *answer = ask_question_string("Press Enter to continue listing items");
+	  if(answer != 13) break; //Ascii Enter == 13
+	}
       
     }
   printf("\n");
