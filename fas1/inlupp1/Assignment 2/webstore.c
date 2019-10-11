@@ -21,6 +21,7 @@ struct merchandise
 
 
 
+
 merch_t input_merch()
 {
   merch_t merch;
@@ -33,6 +34,8 @@ merch_t input_merch()
   return merch;
 }
 
+
+//Calculates which shelf merch is put on
 
 static char *location_of_merch(int no_merch)
 {
@@ -81,7 +84,9 @@ static merch_t add_merch_aux(char *name, int no_items)
   return merch;
 }
 
-static bool name_compare(merch_t *merch, char *name, int no_merch)
+
+//Checks if param name already is in stock
+static bool merch_compare(merch_t *merch, char *name, int no_merch)
 {
   for(int i = 0; i < no_merch; ++i)
     {
@@ -90,6 +95,7 @@ static bool name_compare(merch_t *merch, char *name, int no_merch)
   return false;
 }
 
+//adds new merch to stock
 int ioopm_add_merch(merch_t *merch, int no_merch)
 {
   char *name = ask_question_string("Name of merchandise:");
@@ -105,9 +111,12 @@ int ioopm_add_merch(merch_t *merch, int no_merch)
   return no_merch;
 }
 
+
+
+
 static int strcompare(const void *merch1, const void *merch2)
 {
-  return strcmp(*(char * const) merch1,*(char * const) merch2);
+  return strcmp(*(char * const) merch1, *(char * const) merch2);
 }
 
 static void sort_merch(merch_t *merch, int no_merch)
