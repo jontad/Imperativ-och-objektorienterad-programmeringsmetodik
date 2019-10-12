@@ -14,14 +14,64 @@
 
 ///////////////////// STRUCTS ////////////////////////////
 
-struct merchandise
+
+struct merchandise //merch_t 
 {
   char *Name;
   char *Desc;
   int Price;
-  char *Location;
   int Quantity;
+  char *Location; 
 };
+
+
+/// Below structs for implementing hash_table. Adjust code below as necessary. Only includes first hash table. Read 3.1.
+/*
+struct hash_table //ioopm_hash_table_t 
+{
+  ioopm_hash_function hash; /// function to hash key
+  ioopm_eq_function eq_key; /// PTR to function that compares keys
+  ioopm_eq_function eq_val; /// PTR to function that compares values
+  //entry_t *buckets;         
+  int no_buckets;
+  float load_factor;        /// how often buckets increases in size
+  merch_t *buckets;
+};
+
+
+struct merchandise //merch_t 
+{
+  char *Name;
+  char *Desc;
+  int Price;
+  int Quantity;
+  ioopm_list_t Location; 
+};
+
+struct list //ioopm_list_t
+{
+  size_t list_size;        /// amount of entries in ht
+  ioopm_eq_function equal; /// PTR to function that compares elements
+  ioopm_link_t *first;     /// PTR to first link in ht
+  ioopm_link_t *last;      /// PTR to last link in ht
+};
+
+
+struct link //ioopm_link_t
+
+/// Link between elements in ht
+{
+  shelf_t value;       /// value for entry
+  ioopm_link_t *next; /// PTR to next link
+};
+
+struct shelf //shelf_t 
+{
+  char *Shelf;
+  int Quantity;
+}
+
+  */
 
 ////////////////////// MISC FUNCTIONS ////////////////////////////
 
@@ -210,6 +260,44 @@ int ioopm_remove_merch(merch_t *merch, int no_merch)
 }
 
 
+///////////////// EDIT ////////////////////////////
+
+merch_t edit_aux(int no_merch)
+{
+  merch_t merch;
+  merch.Name = ask_question_string("Name");
+  merch.Desc = ask_question_string("Description:");
+  merch.Price = ask_question_int("Price");
+  merch.Location = location_of_merch(no_merch); //STUB
+  merch.Quantity =  100; //STUB
+  return merch;
+}
+
+void ioopm_edit_merch(merch_t *merch, int no_merch)
+{
+  int edit_merch;
+  ioopm_list_merch(merch, no_merch);
+
+  do
+    {
+      edit_merch =  ask_question_int("Which merchandise do you want to edit?");
+    }
+  while((1 > edit_merch) || (edit_merch > no_merch));
+
+  if(!merch_compare(merch, merch[edit_merch].Name, no_merch))
+    {    
+      //PRINT_MERCH  
+      merch[edit_merch-1] = edit_aux(no_merch);
+    }
+  
+}
+
+/////////////// SHOW STOCK ////////////////////////
+
+void ioopm_show_stock(merch_t *merch, int no_merch)
+{
+  
+}
 
 
 int eventloop(merch_t *merch, int no_merch)
