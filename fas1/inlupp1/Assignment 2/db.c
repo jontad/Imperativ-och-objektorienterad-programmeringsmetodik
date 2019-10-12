@@ -234,7 +234,7 @@ int remove_item_from_db(item_t *items, int no_items)
   int amountTimes = no_items - editItem;
   for(int i = amountTimes;  i != 0; --i)
     {
-      items[editItem] = items [editItem + 1];
+      items[editItem] = items[editItem + 1];
       ++editItem;
     }
   --no_items;
@@ -245,7 +245,7 @@ int remove_item_from_db(item_t *items, int no_items)
 
 
 
-int eventloop(item_t *items, int no_items)
+int eventloop_db(item_t *items, int no_items)
 {
   char answer;
   

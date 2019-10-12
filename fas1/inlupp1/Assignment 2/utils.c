@@ -6,7 +6,8 @@
 #include <ctype.h>
 
 
-/// Hjälpfunktion till ask_question_string
+/// #include <stdio.h>
+//Hjälpfunktion till ask_question_string
 bool not_empty(char *str)
 {
   return strlen(str) > 0;
@@ -143,7 +144,52 @@ char *ask_question_shelf(char *question)
 }
 
 
+char *magick(char *arr1[], char *arr2[], char *arr3[], int n)
+{
+  int counter = 0;
+  char buf[255];
 
+ 
+  int r1 = rand() % n;
+  int r2 = rand() % n;
+  int r3 = rand() % n;
+  
+
+  char *firstword = arr1[r1];
+  char *secondword = arr2[r2];
+  char *thirdword = arr3[r3];
+  
+  for(int i = 0; *firstword != '\0'; ++i)
+    {
+      buf[counter] = *firstword;
+      ++firstword;
+      ++counter;
+    }
+  
+  buf[counter] = '-';
+  ++counter;
+  
+  for(int i = 0; *secondword != '\0'; ++i)
+     {
+       buf[counter] = *secondword;
+       ++secondword;
+       ++counter;
+     }
+   
+    buf[counter] = ' ';
+    ++counter;
+
+    for(int i = 0; *thirdword != '\0'; ++i)
+      {  
+	buf[counter] = *thirdword;
+	++thirdword;
+	++counter;
+      }
+    
+  buf[counter] = '\0';
+
+  return strdup(buf);
+}
 
 
 
