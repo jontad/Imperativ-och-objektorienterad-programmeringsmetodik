@@ -193,6 +193,55 @@ char *magick(char *arr1[], char *arr2[], char *arr3[], int n)
 
 
 
+static void print_menu(void)
+{
+  printf("[L]ägga till en vara\n[T]a bort en vara\n[R]edigera en vara\nÅn[g]ra senaste ändringen\nLista [h]ela varukatalogen\n[A]vsluta\n");
+
+}
+
+
+static bool answer_valid(char *letter)
+{
+  char *validLetter = "LTRGHA";
+  bool a = false;
+
+  if (strlen(letter) > 1)
+    {
+      a = false;
+    }
+
+  else
+    {
+      for(int i = 0; i < strlen(validLetter) ; ++i)
+	{
+	  if (toupper(letter[0]) == validLetter[i])
+	    {
+	      a = true; break;
+	    }
+	}
+    }
+  
+  return a;
+}
+
+
+
+
+char ask_question_menu(char *question)
+{
+  print_menu();
+
+  char *answ;
+ do
+   {
+     answ = ask_question_string(question);
+   }
+ while (!answer_valid(answ));
+
+ char answer = toupper(answ[0]);
+ return answer;
+}
+
 
 
 

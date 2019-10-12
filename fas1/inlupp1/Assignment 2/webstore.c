@@ -193,6 +193,7 @@ void remove_aux(merch_t *merch, int no_merch, int merch_to_remove)
     }
 }
 
+/// VAD MENAS MED ALL STOCK?
 int ioopm_remove_merch(merch_t *merch, int no_merch)
 {
   ioopm_list_merch(merch, no_merch);
@@ -207,6 +208,7 @@ int ioopm_remove_merch(merch_t *merch, int no_merch)
  
   return --no_merch;
 }
+
 
 
 
