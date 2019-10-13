@@ -8,6 +8,7 @@ extern char *strdup(const char *);
 /// Typedefs used in webstore.c
 typedef struct merchandise merch_t;
 typedef struct shelf shelf_t;
+typedef struct store_db store_db_t;
 
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct list ioopm_list_t;

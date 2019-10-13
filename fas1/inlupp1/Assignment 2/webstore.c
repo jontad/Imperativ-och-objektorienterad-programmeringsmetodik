@@ -11,41 +11,31 @@
 
 #define Free(ptr) {free(ptr); ptr = NULL;}
 
+#define No_Buckets 17
+#define Load 1
+
 
 ///////////////////// STRUCTS ////////////////////////////
 
 
-struct merchandise //merch_t 
-{
-  char *Name;
-  char *Desc;
-  int Price;
-  int Quantity;
-  char *Location; 
-};
 
-
-/// Below structs for implementing hash_table. Adjust code below as necessary. Only includes first hash table. Read 3.1.
-/*
 struct hash_table //ioopm_hash_table_t 
 {
   ioopm_hash_function hash; /// function to hash key
   ioopm_eq_function eq_key; /// PTR to function that compares keys
   ioopm_eq_function eq_val; /// PTR to function that compares values
-  //entry_t *buckets;         
+  merch_t *buckets;
   int no_buckets;
   float load_factor;        /// how often buckets increases in size
-  merch_t *buckets;
 };
 
 
 struct merchandise //merch_t 
 {
-  char *Name;
-  char *Desc;
-  int Price;
-  int Quantity;
-  ioopm_list_t Location; 
+  char *name;    //key
+  char *desc;
+  int price;
+  ioopm_list_t *location;  //points to location of first element for key
 };
 
 struct list //ioopm_list_t
@@ -58,8 +48,6 @@ struct list //ioopm_list_t
 
 
 struct link //ioopm_link_t
-
-/// Link between elements in ht
 {
   shelf_t value;       /// value for entry
   ioopm_link_t *next; /// PTR to next link
@@ -67,73 +55,96 @@ struct link //ioopm_link_t
 
 struct shelf //shelf_t 
 {
-  char *Shelf;
-  int Quantity;
-}
+  char *shelf;
+  int quantity;
+};
 
-  */
+struct store_db
+{
+  // merch->name to merch
+  ioopm_hash_table_t *merch;
+
+  // location->name to location
+  ioopm_hash_table_t *location;
+};
+
+
 
 ////////////////////// MISC FUNCTIONS ////////////////////////////
 
-merch_t input_merch()
-{
-  merch_t merch;
-  merch.Name = ask_question_string("Name:");
-  merch.Desc = ask_question_string("Description:");
-  merch.Price = ask_question_int("Price:");
-  merch.Location = ask_question_shelf("Location:");
-  merch.Quantity = ask_question_int("Quantity:");
-  
-  return merch;
-}
-
 
 /// Calculates which shelf merch is put on
-static char *location_of_merch(int no_merch)
+static char *which_shelf(shelf_t shelf, int no_merch)
 {
   int length = snprintf(NULL, 0, "%d", no_merch);
   char *buf = calloc(1, length+3);
 
   merch_t merch;
-  int which_merch_location = no_merch/100;
-  char merch_location = 'A' + which_merch_location;  
+  int which_shelf = no_merch/100;
+  char shelf_letter = 'A' + which_shelf;  
   
   if(no_merch < 10)
     {
       snprintf(buf, length+3, "%s%d","A0", no_merch);
-      merch.Location = buf;
+      shelf = buf;
     }
 
-  else if(merch_location > 90)
+  else if(shelf_letter > 90)
     {
-      merch.Location = "No more room in stock";
+      shelf = "No more room in stock";
     }
 
   else
     {
-      snprintf(buf, length+2, "%c%d", merch_location, no_merch);
-      merch.Location = buf;
+      snprintf(buf, length+2, "%c%d", shelf_letter, no_merch);
+      shelf = buf;
     }
   
   Free(buf);
 
-  return merch.Location;  
+  return shelf;  
 }
 
 
-/////////////////////////// ADD ///////////////////////////////////
 
-static merch_t add_merch_aux(char *name, int no_items)
+static merch_t *merch_create(char *name, char *desc, int price, ioopm_list_t loc)
 {
-  merch_t merch;
-  merch.Name = name;
-  merch.Desc = ask_question_string("Description:");
-  merch.Price = ask_question_int("Price:");
-  merch.Location = location_of_merch(no_items);
-  merch.Quantity = 1;
+  merch_t *merch = calloc(1, sizeof(merch_t));
+  merch->name = name;
+  merch->desc = desc;
+  merch->price = price;
+  merch->location = loc;
 
+  while(merch->location->first != NULL)
+    {
+      merch->location->first = merch->location->first->next;
+    }
+
+  merch->location->first->value->shelf = which_shelf(no_merch);
+  ++merch->location->first->value->quantity;
+  
   return merch;
 }
+
+static void merch_destroy(merch_t *merch)
+{
+  Free(entry);
+}
+
+
+static merch_t *find_prev_merch_for_name(ioopm_hash_table_t *ht, char *name)
+{
+  for(int i = 0; i < ht->no_buckets; ++i)
+    {
+      merch_t *prev_merch = &ht->buckets[i];
+      merch_t *merch = &ht->buckets[i+1];
+
+      if(merch == NULL || prev_merch == NULL|| name < merch->name) return prev_merch; //osäker på logiken
+    }
+  return NULL;
+}
+
+/////////////////////////// ADD ///////////////////////////////////
 
 
 /// Checks if param name already is in stock
@@ -148,23 +159,25 @@ static bool merch_compare(merch_t *merch, char *name, int no_merch)
 
 
 /// Adds new merch to stock
-int ioopm_add_merch(merch_t *merch, int no_merch)
-{
+int ioopm_add_merch(ioopm_hash_table_t *ht,  int no_merch)
+{  
   char *name = ask_question_string("Name of merchandise:");
-  if(merch_compare(merch, name, no_merch))
+
+  merch_t *merch = find_prev_merch_for_name(ht, name)
+  
+  if(merch != NULL)
     {    
       puts("Merch already in stock");
       return no_merch;
     }
   
-  merch[no_merch] = add_merch_aux(name, no_merch);
-  ++no_merch;
 
   return no_merch;
 }
 
 
 
+/*
 //////////////////// LIST MERCH ////////////////////////////
 
 static int strcompare(const void *merch1, const void *merch2)
@@ -333,74 +346,6 @@ int eventloop(merch_t *merch, int no_merch)
   while (answer != 'A');
   return 0;
 }
-
-
-
-/// For testing 
-
-
-merch_t make_merch(char *name, char *desc, int price, char *location, int quantity)
-{
-  merch_t merch;
-  merch.Name = name;
-  merch.Desc = desc;
-  merch.Price = price;
-  merch.Location = location;
-  merch.Quantity = quantity;
-  return merch;
-}
-
-
-int main(int argc, char *argv[])
-{
-  
-  char *array1[] = {"Laser", "Polka", "Extra"}; 
-  char *array2[] = {"konstig", "smakande", "vanlig" };  
-  char *array3[] = {"skruvdragare", "kola", "uppgift"};
-
-  if (argc < 2)
-  {
-    printf("Usage: %s number\n", argv[0]);
-  }
-  else
-  {
-    merch_t db[18]; // Array med plats för 16 varor
-    int db_siz = 0; // Antalet varor i arrayen just nu
-
-    int items = atoi(argv[1]); // Antalet varor som skall skapas
-    /*
-    if (items > 0 && items <= 16)
-    {
-      for (int i = 0; i < items; ++i)
-      {
-        // Läs in en vara, lägg till den i arrayen, öka storleksräknaren
-        merch_t item = input_item();
-        db[db_siz] = item;
-        ++db_siz;
-      }
-    }
-    else
-    {
-      puts("Sorry, must have [1-16] items in database.");
-      return 1; // Avslutar programmet!
-    }
-    */
-    for (int i = db_siz; i < 16; ++i)
-      {
-        char *name = magick(array1, array2, array3, 3);
-        char *desc = magick(array1, array2, array3, 3);
-        int price = random() % 200000;
-       	char *location = location_of_merch(items);
-        merch_t item = make_merch(name, desc, price, location, 1);
-
-        db[db_siz] = item;
-        ++db_siz;
-      }
-    
-    eventloop(db,db_siz);
-    
-  }
-  return 0;
-}
+*/
 
 
