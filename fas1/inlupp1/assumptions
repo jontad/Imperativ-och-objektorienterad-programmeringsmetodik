@@ -1,0 +1,33 @@
+###################### Failure handling #########################
+
+Every corner case not handled by the functions are handled by if-statements. 
+Cases that are not handled by the code is specified in the documentation.
+
+Negative integers are handled by the hashing function.
+
+############# Assumptions of data structure usage #################
+
+Every data structure is assumed to be used as specified in the documentation.
+
+## ioopm_hash_table_t	
+
+## ioopm_link_t
+
+## ioopm_list_t
+
+## entry_t 
+
+## ioopm_list_iterator_t 
+
+## ioopm_hash_function
+
+## ioopm_eq_function
+
+## ioopm_char_predicate & ioopm_predicate
+
+## ioopm_apply_function & ioopm_apply_char_char
+
+## option_t
+
+
+
