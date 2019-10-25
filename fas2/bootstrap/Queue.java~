@@ -1,0 +1,48 @@
+
+
+public class Queue{
+    
+    private class Node{
+	Customer element;
+	Node next;
+    }
+
+    Node first;
+    Node last;
+    int length;
+
+    public Queue(){
+	this.first = null;
+	this.last = null;
+	this.length = 0;
+    }
+
+    public int length(){
+	return this.length;
+    }
+
+    public Node enqueue(Customer customer){
+	Node temp = last;
+        this.last = new Node();
+	this.last.element = customer;
+	this.last.next = null;
+	length++;
+    }
+
+    public Customer dequeue(){
+	Node temp = first;
+	first.next = null;
+	
+	Customer customer = temp.element;
+	this.first = temp.next;
+
+	length--;
+
+	return customer;
+    }
+
+    public Customer first(){
+	return first.element;
+
+    }	
+}

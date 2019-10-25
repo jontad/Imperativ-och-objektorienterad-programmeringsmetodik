@@ -1,0 +1,51 @@
+
+public class Register{
+    boolean open;
+    Queue queue;
+
+    public Register(){
+	this.open = false;
+	this.queue = 
+    }
+
+    public boolean open(){
+	this.open = true;
+    }
+
+    public boolean close(){
+	this.open = false;
+    }
+
+    public boolean isOpen(){
+	if(open) return true;
+	else return false;
+    }
+    
+    //?
+    public void step(){
+	queue.first().bornTime++;   
+    }
+ 
+    public boolean hasCustomer{
+	if(queue.length() == 0) return false;
+	else return true;
+    }
+
+    public boolean currentCustomerIsDone(){
+	//TODO
+    }
+
+    public void addToQueue(Customer c){
+	queue.enqueue(c);
+    }
+
+    public Customer removeCurrentCustomer(){
+	queue.dequeue();
+    }
+
+    public int getQueueLength(){
+	return queue.length();
+    }
+    
+
+}
