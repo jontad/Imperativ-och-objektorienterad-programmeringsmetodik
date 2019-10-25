@@ -1,0 +1,21 @@
+
+
+public class Simulation{
+
+    Store store;
+    int time;
+    int intesity;
+    int maxGroceries;
+    int thresholdForNewRegister;
+    Random random;
+
+    public Simulation(int amountOfRegisters, int probability, int max, int threshold){
+	this.store = new Store(amountOfRegisters);
+	this.time = 0;
+	this.intesity = probability;
+	this.maxGroceries = max;
+	this.thresholdForNewRegister = threshold;
+	this.random = new Random();
+    }
+
+}

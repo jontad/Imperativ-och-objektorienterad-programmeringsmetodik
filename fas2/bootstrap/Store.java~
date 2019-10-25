@@ -1,0 +1,11 @@
+
+public class Store{
+    Register registers[];
+
+    //?
+    public Store(int amountOfRegisters){
+	this.registers[] = registers[amountOfRegisters];
+    }
+
+    public getAverageQueueLength
+}
