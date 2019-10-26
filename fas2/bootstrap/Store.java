@@ -1,11 +1,14 @@
 import java.util.*;
 
 public class Store{
-    Register registers[];
+    private Register registers[];
+    private String printRegisters;
 
     
     public Store(int amountOfRegisters){
 	this.registers = new Register[amountOfRegisters];
+	this.printRegisters = new String();
+	
 	for (int i = 0; i < registers.length; i++) {
 	    this.registers[i] = new Register();
 	}
@@ -15,15 +18,16 @@ public class Store{
 	int length = 0;
 	
 	for (int i = 0; i < registers.length; i++) {
-	    int regLength = registers[i].getQueueLength(); 
-	    length = regLength + length;
+	    int regLength = registers[i].getQueueLength();
+	    if(registers[i].isOpen()){
+		length = regLength + length;
+	    }
 	}
 	return length/(registers.length);
     }
 
-    //?
+    
     public void newCustomer(Customer c){
-
 	int shortestQueue = registers[0].getQueueLength();
 	Register reg  = registers[0];
 	for (int i = 1; i < registers.length; i++) {
@@ -36,8 +40,6 @@ public class Store{
 	reg.addToQueue(c);
     }
 
-
-    //tiden går ett steg i varuhuset
     public void step(){
 	for (int i = 0; i < registers.length; i++) {
 	    registers[i].step();
@@ -53,19 +55,36 @@ public class Store{
 	}
     }
 
-    public List getDoneCustomers(){
-	List doneCustomers = new LinkedList();
+    public Customer[] getDoneCustomers(){
+	
+        int counter = 0;
 	for (int i = 0; i < registers.length; i++) {
 
 	    if(registers[i].currentCustomerIsDone()){
-		Customer doneCustomer = registers[i].removeCurrentCustomer();
-		doneCustomers.add(doneCustomer);
+		counter++;
 	    }
 	}
+	Customer[] doneCustomers = new Customer[counter];
 	
+	for (int i = 0; i < counter; i++) {
+
+	    if(registers[i].currentCustomerIsDone()){
+		doneCustomers[i] = registers[i].removeCurrentCustomer(); 
+	    }
+	}	
 	return doneCustomers;
     }
 
+    public void registersToString(){
+	for (int i = 0; i < registers.length; i++) {
+	    this.printRegisters += registers[i].toString();
+	}
+    }
+    
+    public String toString(){
+	registersToString();
+	return printRegisters;
+    }
     
 }
 

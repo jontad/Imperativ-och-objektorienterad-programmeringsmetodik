@@ -1,8 +1,8 @@
 
 public class Customer {
 
-    int bornTime;
-    int groceries;
+    private int bornTime;
+    private int groceries;
 
     public Customer(int time, int amount) {
 	this.bornTime = time;
@@ -19,18 +19,19 @@ public class Customer {
 	else return false;
     }
 
-    public String toString() {
-	return "Groceries processed: " + groceries;
+    public int time() {
+	return bornTime;
+    }
+
+    public String groceriesToString(){
+	return Integer.toString(groceries);
     }
 
     public static void main(String[] args){
 	Customer groceries = new Customer(0,9);
 	for (; !groceries.isDone(); groceries.serve()) {
-	    System.out.println(groceries);
-    
+	    System.out.println(groceries);   
 	}
-    	
     }	    
-	
 }
 

@@ -2,8 +2,8 @@
 public class Queue{
     
     private class Node{
-	Customer element;
-	Node next;
+	private Customer element;
+	private Node next;
     }
 
     Node first;
@@ -49,14 +49,13 @@ public class Queue{
 
     public Customer first(){
 	return first.element;
-
     }
     public String toString()
     {
-	return "Customer: " + first();
+	return "C " + first();
     }
     
-    public static void main(String[] args){
+    /*    public static void main(String[] args){
 	Queue q = new Queue();
 
 	Customer cust1 = new Customer(0,9);
@@ -74,8 +73,8 @@ public class Queue{
 	System.out.println(q.first());
 	q.dequeue();	
 	System.out.println(q.first());
-
+    
 
 	
-    }
+	}*/
 }

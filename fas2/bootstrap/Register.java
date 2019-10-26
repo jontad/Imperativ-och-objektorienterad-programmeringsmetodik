@@ -1,11 +1,13 @@
 
 public class Register{
-    boolean open;
-    Queue queue;
+    private boolean open;
+    private Queue queue;
+    private String customersPrint;
 
     public Register(){
 	this.open = false;
 	this.queue = new Queue();
+	this.customersPrint = new String();
     }
 
     public boolean open(){
@@ -21,8 +23,10 @@ public class Register{
 	else return false;
     }
     
-    public int step(){
-	return queue.first().serve();   
+    public void step(){
+	if(queue.length != 0){
+	 queue.first().serve();
+	}
     }
  
     public boolean hasCustomer(){
@@ -31,7 +35,7 @@ public class Register{
     }
 
     public boolean currentCustomerIsDone(){
-	if(queue.first().isDone()) return true;
+	if(queue.length != 0) return queue.first().isDone();
 	else return false;
     }
 
@@ -46,9 +50,24 @@ public class Register{
     public int getQueueLength(){
 	return queue.length();
     }
+
+    public void amountOfCustomers(){
+	for (int i = 0; i < queue.length() - 1; i++){
+	    this.customersPrint += "@";
+	}
+    }
+
+    //dont forget groceries ([n])
+    public String toString(){
+	if(!open){
+	    amountOfCustomers();
+	    //String groceries = queue.first().groceriesToString();
+	   return "[ ]" + customersPrint;
+	}
+	else return "x [ ]";
+    }
     
-    
-    public static void main(String[] args){
+    /*    public static void main(String[] args){
 	Register reg = new Register();
 	
 	Customer cust1 = new Customer(0,9);
@@ -72,6 +91,6 @@ public class Register{
 	}
 	
 	
-    }
+	}*/
     
 }
