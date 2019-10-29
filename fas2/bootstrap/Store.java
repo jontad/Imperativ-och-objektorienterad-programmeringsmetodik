@@ -2,37 +2,40 @@ import java.util.*;
 
 public class Store{
     private Register registers[];
-    private String printRegisters;
-
+    private Customer[] doneCustomers;
     
     public Store(int amountOfRegisters){
-	this.registers = new Register[amountOfRegisters];
-	this.printRegisters = new String();
-	
-	for (int i = 0; i < registers.length; i++) {
-	    this.registers[i] = new Register();
+	if(amountOfRegisters < 1){
+	    throw new IllegalArgumentException(amountOfRegisters + " is an illegal amount of registers");
 	}
+	this.registers = new Register[amountOfRegisters];	
+	for (int i = 0; i < this.registers.length; i++) {
+	    registers[i] = new Register();
+	}
+	registers[0].open();
     }
 
     public int getAverageQueueLength(){
 	int length = 0;
+	int openRegisters = 0;
 	
-	for (int i = 0; i < registers.length; i++) {
-	    int regLength = registers[i].getQueueLength();
+	for (int i = 0; i < registers.length; i++){
 	    if(registers[i].isOpen()){
-		length = regLength + length;
+		openRegisters++;
+		length += registers[i].getQueueLength();
 	    }
 	}
-	return length/(registers.length);
+	if(openRegisters == 0) return 0;
+	return length/openRegisters;
     }
 
     
     public void newCustomer(Customer c){
-	int shortestQueue = registers[0].getQueueLength();
-	Register reg  = registers[0];
+	int shortestQueue = this.registers[0].getQueueLength();
+	Register reg  = this.registers[0];
 	for (int i = 1; i < registers.length; i++) {
 
-	    if(registers[i].getQueueLength() < shortestQueue){
+	    if(registers[i].isOpen() && registers[i].getQueueLength() < shortestQueue){
 		shortestQueue = registers[i].getQueueLength();
 	        reg = registers[i];
 	    }	
@@ -42,13 +45,16 @@ public class Store{
 
     public void step(){
 	for (int i = 0; i < registers.length; i++) {
-	    registers[i].step();
+	    if(registers[i].isOpen() && registers[i].hasCustomer()){
+		registers[i].step();
+	    }
 	}
     }
 
     public void openNewRegister(){
 	for (int i = 0; i < registers.length; i++) {
-	    if (registers[i].isOpen()){
+
+	    if (!registers[i].isOpen()){
 		registers[i].open();
 		break;
 	    }
@@ -56,36 +62,38 @@ public class Store{
     }
 
     public Customer[] getDoneCustomers(){
-	
-        int counter = 0;
+	int counter = 0;
 	for (int i = 0; i < registers.length; i++) {
-
 	    if(registers[i].currentCustomerIsDone()){
 		counter++;
 	    }
 	}
-	Customer[] doneCustomers = new Customer[counter];
-	
-	for (int i = 0; i < counter; i++) {
 
-	    if(registers[i].currentCustomerIsDone()){
-		doneCustomers[i] = registers[i].removeCurrentCustomer(); 
+	Customer[] doneCustomers = new Customer[counter];
+	for (int i = 0; i < counter; i++) {
+	    Register temp = registers[i];
+	    if(temp.currentCustomerIsDone()){
+		/*doneCustomers[i] = this.registers[i].getFirstCustomer();
+		  this.registers[i].removeCurrentCustomer();*/
+		Customer doneCustomer = temp.removeCurrentCustomer();
+		doneCustomers[i] = doneCustomer;
 	    }
 	}	
 	return doneCustomers;
     }
-
-    public void registersToString(){
+    
+    private String registersToString(){
+	String regToString = new String();
 	for (int i = 0; i < registers.length; i++) {
-	    this.printRegisters += registers[i].toString();
+	    regToString += registers[i].toString();
 	}
+	return regToString;
     }
     
     public String toString(){
-	registersToString();
-	return printRegisters;
+	String result = registersToString();
+	return result;
     }
-    
 }
 
 

@@ -1,71 +1,79 @@
 
 public class Register{
     private boolean open;
-    private Queue queue;
-    private String customersPrint;
+    private Queue<Customer> queue;
 
     public Register(){
 	this.open = false;
-	this.queue = new Queue();
-	this.customersPrint = new String();
+	this.queue = new Queue<Customer>();
     }
 
-    public boolean open(){
-	return this.open = true;
+    public void open(){
+	this.open = true;
     }
 
-    public boolean close(){
-	return this.open = false;
+    public void close(){
+	this.open = false;
     }
 
     public boolean isOpen(){
-	if(open) return true;
-	else return false;
+	return this.open;
     }
     
     public void step(){
-	if(queue.length != 0){
-	 queue.first().serve();
-	}
+	Customer customer = this.queue.first(); 
+	customer.serve();
+	 
     }
  
     public boolean hasCustomer(){
-	if(queue.length() == 0) return false;
-	else return true;
+	return this.queue.length() > 0;
+        
     }
 
     public boolean currentCustomerIsDone(){
-	if(queue.length != 0) return queue.first().isDone();
+	if(queue.length() != 0){
+	    Customer customer = this.queue.first(); 
+	    return customer.isDone();
+	}
 	else return false;
     }
 
     public void addToQueue(Customer c){
-	queue.enqueue(c);
+	this.queue.enqueue(c);
     }
 
     public Customer removeCurrentCustomer(){
-	return queue.dequeue();
+	return this.queue.dequeue();
     }
 
     public int getQueueLength(){
-	return queue.length();
+	return this.queue.length();
     }
 
-    public void amountOfCustomers(){
+    public Customer getFirstCustomer(){
+	return this.queue.first();
+    }
+    
+    private String amountOfCustomers(){
+	String customersToPrint = "  " + this.queue.first() + "";
 	for (int i = 0; i < queue.length() - 1; i++){
-	    this.customersPrint += "@";
+	    customersToPrint += "@";
 	}
+	return customersToPrint + "\n";
     }
 
-    //dont forget groceries ([n])
     public String toString(){
-	if(!open){
-	    amountOfCustomers();
-	    //String groceries = queue.first().groceriesToString();
-	   return "[ ]" + customersPrint;
+	if(this.open && 0 < queue.length()){
+	    String customers = amountOfCustomers();
+	    return customers;
 	}
-	else return "x [ ]";
+	else if(this.open) return "  [ ] \n";
+	else return "x [ ]\n";
     }
+
+	    
+    
     
     /*    public static void main(String[] args){
 	Register reg = new Register();

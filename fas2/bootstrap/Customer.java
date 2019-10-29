@@ -9,29 +9,27 @@ public class Customer {
 	this.groceries = amount;
     }
     
-    public int serve() {
-	 this.groceries = groceries - 1;
-	 return this.groceries;
+    public void serve() {
+	    this.groceries--;
     }
 
     public boolean isDone() {
-	if (this.groceries == 0) return true;
-	else return false;
+	return this.groceries == 0; 
     }
 
     public int time() {
-	return bornTime;
+	 return this.bornTime;
     }
 
-    public String groceriesToString(){
-	return Integer.toString(groceries);
+    public String toString(){
+	return "[" + this.groceries + "]";
     }
-
-    public static void main(String[] args){
+    
+    /*public static void main(String[] args){
 	Customer groceries = new Customer(0,9);
 	for (; !groceries.isDone(); groceries.serve()) {
 	    System.out.println(groceries);   
 	}
-    }	    
+	}*/	    
 }
 

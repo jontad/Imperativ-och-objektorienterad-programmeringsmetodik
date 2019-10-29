@@ -1,8 +1,8 @@
 
-public class Queue{
+public class Queue<T>{
     
-    private class Node{
-	private Customer element;
+    private class Node {
+	private T element;
 	private Node next;
     }
 
@@ -20,47 +20,50 @@ public class Queue{
 	return this.length;
     }
 
-    public void enqueue(Customer customer){
-	Node temp = last;
+    public void enqueue(T elem){
+	Node temp = this.last;
         this.last = new Node();
-	this.last.element = customer;
+	this.last.element = elem;
 	this.last.next = null;
 
 	if(first == null){
 	    this.first = last;
 	}
 	else {
-	    temp.next = last;
+	    temp.next = this.last;
 	}
-	length++;
+	this.length++;
     }
 
-    public Customer dequeue(){
-	if(first == null){
+    public T dequeue(){
+	if(this.first == null){
 	    throw new EmptyQueueException(); 
 	}
-	Customer customer = first.element;
-	this.first = first.next;
+	T elem = this.first.element;
+	this.first = this.first.next;
 
-	length--;
+	this.length--;
 
-	return customer;
+	if(first == null) last = null;
+	return elem;
     }
 
-    public Customer first(){
-	return first.element;
+    public T first(){
+	if(first == null) throw new EmptyQueueException();
+	return this.first.element;
     }
-    public String toString()
+
+    /*public String toString()
     {
 	return "C " + first();
     }
     
-    /*    public static void main(String[] args){
+       public static void main(String[] args){
 	Queue q = new Queue();
 
-	Customer cust1 = new Customer(0,9);
-	Customer cust2 = new Customer(0,7);
-	Customer cust3 = new Customer(0,2);
+	T cust1 = new T(0,9);
+	T cust2 = new T(0,7);
+	T cust3 = new T(0,2);
 
 	q.enqueue(cust1);
 	q.enqueue(cust2);
