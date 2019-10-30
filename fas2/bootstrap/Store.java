@@ -62,23 +62,16 @@ public class Store{
     }
 
     public Customer[] getDoneCustomers(){
+
 	int counter = 0;
-	for (int i = 0; i < registers.length; i++) {
-	    if(registers[i].currentCustomerIsDone()){
+	
+	Customer[] doneCustomers = new Customer[registers.length];
+	for(Register reg : registers){
+	    if(reg.currentCustomerIsDone()){
+		doneCustomers[counter] = reg.removeCurrentCustomer();	    
 		counter++;
 	    }
 	}
-
-	Customer[] doneCustomers = new Customer[counter];
-	for (int i = 0; i < counter; i++) {
-	    Register temp = registers[i];
-	    if(temp.currentCustomerIsDone()){
-		/*doneCustomers[i] = this.registers[i].getFirstCustomer();
-		  this.registers[i].removeCurrentCustomer();*/
-		Customer doneCustomer = temp.removeCurrentCustomer();
-		doneCustomers[i] = doneCustomer;
-	    }
-	}	
 	return doneCustomers;
     }
     

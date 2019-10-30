@@ -33,27 +33,25 @@ public class Simulation{
 
     
     public void step(){
+	this.time++;
 	
 	Random random = new Random();
 	int rand = random.nextInt(99) + 1;
 	
 	if(rand < intensity){
 	    int groceries = random.nextInt(maxGroceries) + 1;
-	    Customer customer = new Customer(time, groceries);
 
+	    Customer customer = new Customer(time, groceries);
 	    this.store.newCustomer(customer);
 	}
 	
 	this.averageWaitTime = this.store.getAverageQueueLength();
-	System.out.println("Average wait-time: " + averageWaitTime);
 
 	if(this.thresholdForNewRegister < this.averageWaitTime){
 	    this.store.openNewRegister();
 	}
 	
-        Customer doneCustomers[] = this.store.getDoneCustomers();
-	this.servedCustomers += doneCustomers.length;
-	
+        Customer doneCustomers[] = this.store.getDoneCustomers();	
 	for (int i = 0; i < doneCustomers.length; i++) {	
 	    if(doneCustomers[i] != null){
 				
@@ -67,9 +65,7 @@ public class Simulation{
 		}
 	    }
 	}
-	this.averageWaitTime = totalWaitTime/servedCustomers;
-	this.time++;
 	this.store.step();   
-	
+	this.averageWaitTime = totalWaitTime/servedCustomers;	
     }	
 }

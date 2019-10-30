@@ -10,7 +10,7 @@ public class Customer {
     }
     
     public void serve() {
-	    this.groceries--;
+	this.groceries--;
     }
 
     public boolean isDone() {
