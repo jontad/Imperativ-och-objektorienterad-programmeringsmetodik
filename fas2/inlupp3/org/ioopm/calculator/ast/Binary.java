@@ -9,6 +9,26 @@ public abstract class Binary extends SymbolicExpression {
 	this.rhs = rhs;
     }
 
+    protected SymbolicExpression getLhs(){
+	return lhs;
+    }
+    
+    protected SymbolicExpression getRhs(){
+	return rhs;
+    }
+
+    public boolean equals(Object other){
+	if (other instanceof Binary) {
+	    return this.equals((Binary) other);
+	} else {
+	    return false;
+	}
+    }
+
+    public boolean equals(Binary other){
+	return this.lhs.equals(other.lhs) && this.rhs.equals(other.rhs);
+    }
+    
     public String toString (){
 	String leftString = lhs.toString();
 	String rightString = rhs.toString();

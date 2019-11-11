@@ -27,5 +27,21 @@ public class Constant extends Atom {
     public String toString(){
 	return String.valueOf(this.value);
     }
+
+    public boolean equals(Object other){
+	if (other instanceof Constant) {
+	    return this.equals((Constant) other);
+	} else {
+	    return false;
+	}	
+    }
+
+    public boolean equals(Constant other){
+	return this.value == other.value;
+    }
+
+    public SymbolicExpression eval(Environment vars){
+	return new Constant(value);
+    }
 }
  

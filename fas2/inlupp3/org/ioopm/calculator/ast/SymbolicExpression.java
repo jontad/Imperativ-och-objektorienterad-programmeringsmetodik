@@ -1,4 +1,5 @@
 package org.ioopm.calculator.ast;
+import java.util.HashMap;
 
 public abstract class SymbolicExpression {
     public SymbolicExpression () {
@@ -8,6 +9,10 @@ public abstract class SymbolicExpression {
     public boolean isConstant(){
 	return false;
     }
+    public boolean isVariable(){
+	return false;
+    }
+    
     public String getName(){
 	throw new RuntimeException("getName() called on expression with no operator");
     }
@@ -20,14 +25,5 @@ public abstract class SymbolicExpression {
 	throw new RuntimeException("getValue() called on non constant expression");
     }
 
-    public boolean equals(Object other){
-        if(other instanceof SymbolicExpression) return true;
-	else return false;     
-	
-	    
-    }
-
-	/*public SymbolicExpression eval(){
-	return null;
-    }*/
+    public abstract SymbolicExpression eval(Environment vars);
 }

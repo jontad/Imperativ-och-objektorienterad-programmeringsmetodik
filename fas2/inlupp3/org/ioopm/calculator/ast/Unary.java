@@ -14,4 +14,12 @@ public abstract class Unary extends SymbolicExpression {
     public String toString(){
 	return this.getName() + "(" + expr + ")";
     }
+
+    public boolean equals(Unary other){
+	return this.expr.equals(other.expr);
+    }
+
+    protected SymbolicExpression getExpr(){
+	return expr;
+    }
 }
