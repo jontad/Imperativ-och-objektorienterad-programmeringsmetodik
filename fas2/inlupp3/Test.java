@@ -1,4 +1,5 @@
 import org.ioopm.calculator.ast.*;
+import org.ioopm.calculator.parser.*;
 import java.util.HashMap;
 
 public class Test {
@@ -16,6 +17,16 @@ public class Test {
 	    System.out.println("Passed: " + e);
 	} else {
 	    System.out.println("Error: expected '" + expected + "' but got '" + e + "'");
+	}
+    }
+
+    static void testParsing(SymbolicExpression expected, String e, Environment vars){
+	CalculatorParser p = new CalculatorParser();
+	SymbolicExpression r = p.parse(e).eval(vars);
+	if (r.equals(expected)){
+	    System.out.println("Passed: " + e);
+	} else {
+	    System.out.println("Error: expected '" + expected + "' but got '" + r + "'");
 	}
     }
 	
@@ -95,6 +106,46 @@ public class Test {
 	//Negation
 	testEvaluating(c5, n, vars);
 
+	System.out.println("=====PARSING=====");
+	vars = new Environment();
+	
+	//Constant
+	testParsing(c1, "5", vars);
+
+	//Assignment
+	testParsing(c4, "10 = x", vars);
+
+	//Variable
+	testParsing(c4, "x", vars);
+
+	//Subtraction
+	testParsing(c1, "7 -     2", vars);
+	
+	//Addition
+	testParsing(c3, "5 + 2", vars);
+
+	//Multiplication
+	testParsing(c4, "5*2", vars);
+
+	//Division
+	testParsing(c2, "10/5", vars);
+
+	//Cos
+	testParsing(c7, "cos (0)", vars);
+
+	//Sin
+	testParsing(c6, "sin 0", vars);
+
+	//Exp & Log
+	testParsing(c4, "lOg(eXp(10))", vars);
+
+	//Negation
+	testParsing(c5, "-2", vars);
+
+	//Multiple assignment
+	testParsing(c4, "10 = a = b = cd", vars);
+	testParsing(c2, "(a+b-cd)/5", vars);
+	
     }
 
 }
