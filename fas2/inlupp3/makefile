@@ -8,7 +8,7 @@ test: Test.java
 	javac -d classes Test.java
 
 runTest: classes/Test.class
-	java -cp classes Test
+	java -cp classes -ea Test
 
 clean:
 	rm -rf classes; rm *.class

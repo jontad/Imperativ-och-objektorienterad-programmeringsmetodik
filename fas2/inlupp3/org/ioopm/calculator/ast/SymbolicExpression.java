@@ -12,12 +12,15 @@ public abstract class SymbolicExpression {
     public boolean isVariable(){
 	return false;
     }
+    public boolean isCommand(){
+	return false;
+    }
     
     public String getName(){
 	throw new RuntimeException("getName() called on expression with no operator");
     }
 
-    public int getPriority () {
+    public int getPriority() {
 	return 0;
     }
 

@@ -1,9 +1,17 @@
 package org.ioopm.calculator.ast;
 
 public class Vars extends Command {
+    private boolean runOnce = false;
+    private static final Vars theInstance = new Vars();
+    
+    private Vars (){
+	assert !runOnce : "Singleton has been run more than once";
+	runOnce = true;
+    }
+    
 
-    public Vars (){
-
+    public static Vars instance() {
+        return theInstance;
     }
     
     public String getName (){

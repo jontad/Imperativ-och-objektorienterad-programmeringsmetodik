@@ -1,9 +1,16 @@
 package org.ioopm.calculator.ast;
 
 public class Quit extends Command {
+    private boolean runOnce = false;
+    private static final Quit theInstance = new Quit();
+    
+    private Quit (){
+	assert !runOnce : "Singleton has been run more than once";
+	runOnce = true;
+    }
 
-    public Quit (){
-
+    public static Quit instance(){
+	return theInstance;
     }
     
     public String getName (){
