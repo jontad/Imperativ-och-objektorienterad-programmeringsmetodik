@@ -145,7 +145,16 @@ public class Test {
 	//Multiple assignment
 	testParsing(c4, "10 = a = b = cd", vars);
 	testParsing(c2, "(a+b-cd)/5", vars);
-	
+
+	//Named Constant
+	testParsing(c7, "-cos(pi)", vars);
+
+	//Invalid assignment
+	try {
+	    testParsing(c4, "10 = L", vars);
+	} catch (IllegalExpressionException exception){
+	    System.out.println("Caught invalid expression '10 = L': " + exception);
+	}
     }
 
 }

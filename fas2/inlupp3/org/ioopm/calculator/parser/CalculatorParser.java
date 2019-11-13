@@ -22,7 +22,7 @@ public class CalculatorParser {
 	return null;
     }
 
-    private SymbolicExpression top_level() throws IOException{ //TODO Add throws to all functions
+    private SymbolicExpression top_level() throws IOException{
 	SymbolicExpression state = statement();
 	this.st.nextToken();
 	if (this.st.ttype == this.st.TT_EOL || this.st.ttype == this.st.TT_EOF){
@@ -166,14 +166,20 @@ public class CalculatorParser {
     }
     private SymbolicExpression identifier() throws IOException{
         this.st.nextToken();
-	if (this.st.ttype == this.st.TT_WORD){
-	    String identifier = this.st.sval.toLowerCase();
-	    if (identifier.equals("sin") || identifier.equals("cos") ||identifier.equals("log") ||identifier.equals("exp") ||identifier.equals("vars") ||identifier.equals("quit")){
-		throw new SyntaxErrorException("Invalid identifier");
-	    }
-	    return new Variable(this.st.sval);
+	String id;
+	if (this.st.ttype != this.st.TT_WORD){
+	    id = Character.toString(this.st.ttype);
 	} else {
-	    return new Variable(Character.toString(this.st.ttype));
+	    id = this.st.sval;
+	}
+	String id_lower = id.toLowerCase();
+	if (id_lower.equals("sin") || id_lower.equals("cos") || id_lower.equals("log") || id_lower.equals("exp") || id_lower.equals("vars") || id_lower.equals("quit")){
+	    throw new SyntaxErrorException("Invalid identifier");
+	}
+	if (Constants.namedConstants.containsKey(id)){
+	    return new NamedConstant(id);
+	} else {
+	    return new Variable(id);
 	}
     }
 }

@@ -28,7 +28,7 @@ public class Assignment extends Binary {
 	if (rhs.isVariable()){
 	    vars.put((Variable)rhs, lhs);
 	} else {
-	    throw new IllegalArgumentException("Right hand side expression must be a variable name"); //TODO is this the best type of exception
+	    throw new IllegalExpressionException("Right hand side expression may not be a named constant"); //TODO is this the best type of exception
 	}
 	return lhs;
     }

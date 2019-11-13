@@ -2,8 +2,7 @@ package org.ioopm.calculator.ast;
 import java.util.HashMap;
 
 public abstract class SymbolicExpression {
-    public SymbolicExpression () {
-	
+    public SymbolicExpression () {	
     }
 
     public boolean isConstant(){
