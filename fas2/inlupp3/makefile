@@ -1,5 +1,5 @@
 all:
-	javac -d classes org/ioopm/calculator/ast/*.java
+	find org/ioopm/calculator/ |grep .java|xargs javac -d classes
 
 run:
 	java -cp classes org.ioopm.calculator.Calculator

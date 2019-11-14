@@ -21,12 +21,18 @@ public class Test {
     }
 
     static void testParsing(SymbolicExpression expected, String e, Environment vars){
-	CalculatorParser p = new CalculatorParser();
-	SymbolicExpression r = p.parse(e).eval(vars);
-	if (r.equals(expected)){
-	    System.out.println("Passed: " + e);
-	} else {
-	    System.out.println("Error: expected '" + expected + "' but got '" + r + "'");
+	try {
+	    CalculatorParser p = new CalculatorParser();
+	    SymbolicExpression r = p.parse(e).eval(vars);
+	    if (r.equals(expected)){
+		System.out.println("Passed: " + e);
+	    } else {
+		System.out.println("Error: expected '" + expected + "' but got '" + r + "'");
+	    }
+	} catch (SyntaxErrorException exception){
+	    System.out.println("Caught Syntax Error '" + e +"': " + exception.getMessage());
+	} catch (IllegalExpressionException exception){
+	    System.out.println("Caught invalid expression '" + e +"': " + exception.getMessage());
 	}
     }
 	
@@ -150,11 +156,12 @@ public class Test {
 	testParsing(c7, "-cos(pi)", vars);
 
 	//Invalid assignment
-	try {
-	    testParsing(c4, "10 = L", vars);
-	} catch (IllegalExpressionException exception){
-	    System.out.println("Caught invalid expression '10 = L': " + exception);
-	}
+	testParsing(c4, "10 = L", vars);
+
+	//Syntax Error
+	testParsing(c4, "5 7 9", vars);
+
+	
     }
 
 }

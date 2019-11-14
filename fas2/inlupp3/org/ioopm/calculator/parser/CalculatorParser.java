@@ -22,21 +22,34 @@ public class CalculatorParser {
 	return null;
     }
 
+    private SymbolicExpression Unexpected() throws IOException{
+	this.st.nextToken();
+	String unexpected;
+	if (this.st.ttype == this.st.TT_WORD){
+	    unexpected = this.st.sval;
+	} else if (this.st.ttype == this.st.TT_NUMBER) {
+	    unexpected = Double.toString(this.st.nval);
+	} else {
+	    unexpected = Character.toString(this.st.ttype);
+	}
+	throw new SyntaxErrorException ("Unexpected: " + unexpected);
+    }
+
     private SymbolicExpression top_level() throws IOException{
 	SymbolicExpression state = statement();
 	this.st.nextToken();
 	if (this.st.ttype == this.st.TT_EOL || this.st.ttype == this.st.TT_EOF){
 	    return state;
 	} else {
-	    System.out.println(this.st.ttype);
-	    throw new SyntaxErrorException ("Expected EOL or EOF");
+	    this.st.pushBack();
+	    return Unexpected();
 	}
     }
     private SymbolicExpression statement() throws IOException{
 	this.st.nextToken();
 	if (this.st.ttype == this.st.TT_WORD){
 	    String command = this.st.sval.toLowerCase();
-	    if (command.equals("quit") || command.equals("vars")){
+	    if (command.equals("quit") || command.equals("vars") || command.equals("clear")){
 		this.st.pushBack();
 		return command();
 	    }
@@ -53,6 +66,9 @@ public class CalculatorParser {
 	    }
 	    else if (command.equals("vars")){
 		return Vars.instance();
+	    }
+	    else if (command.equals("clear")){
+		return Clear.instance();
 	    }
 	} 
 	throw new RuntimeException("Called command() without command");
@@ -118,7 +134,7 @@ public class CalculatorParser {
 	    if (unary.equals("exp") || unary.equals("log") || unary.equals("sin") || unary.equals("cos")) {
 		this.st.pushBack();
 		return unary();
-	    } else if (unary.equals("vars") || unary.equals("quit")) {
+	    } else if (unary.equals("vars") || unary.equals("quit") || unary.equals("clear")) {
 		throw new SyntaxErrorException("Invalid identifier");
 	    } else {
 		this.st.pushBack();
@@ -128,7 +144,8 @@ public class CalculatorParser {
 	    this.st.pushBack();
 	    return identifier();
 	} else {
-	    throw new SyntaxErrorException("Invalid syntax");
+	    this.st.pushBack();
+	    return Unexpected();
 	}
     }
     private SymbolicExpression unary() throws IOException{
@@ -167,13 +184,16 @@ public class CalculatorParser {
     private SymbolicExpression identifier() throws IOException{
         this.st.nextToken();
 	String id;
+	if (this.st.ttype == this.st.TT_NUMBER){
+	    throw new SyntaxErrorException("Invalid identifier");
+	}
 	if (this.st.ttype != this.st.TT_WORD){
 	    id = Character.toString(this.st.ttype);
 	} else {
 	    id = this.st.sval;
 	}
 	String id_lower = id.toLowerCase();
-	if (id_lower.equals("sin") || id_lower.equals("cos") || id_lower.equals("log") || id_lower.equals("exp") || id_lower.equals("vars") || id_lower.equals("quit")){
+	if (id_lower.equals("sin") || id_lower.equals("cos") || id_lower.equals("log") || id_lower.equals("exp") || id_lower.equals("vars") || id_lower.equals("quit") || id_lower.equals("clear")){
 	    throw new SyntaxErrorException("Invalid identifier");
 	}
 	if (Constants.namedConstants.containsKey(id)){
