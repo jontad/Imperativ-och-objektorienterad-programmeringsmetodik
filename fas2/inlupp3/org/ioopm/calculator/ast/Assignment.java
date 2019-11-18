@@ -1,19 +1,52 @@
 package org.ioopm.calculator.ast;
 
-public class Assignment extends Binary {
-    
+
+/**
+ * @file Assignment.java 
+ * @author Patrik Johansson, Jonathan Tadese 
+ * @date 15-11-2019
+ * @class Assignment
+ * @brief Class for binary operation Assignment. Simply assigns value.
+ */
+
+
+public class Assignment extends Binary 
+{
+
+// **************************************************
+// Constructor
+// **************************************************
+     
     public Assignment (SymbolicExpression lhs, SymbolicExpression rhs) {
 	super (lhs, rhs);
     }
     
+// **************************************************
+// Public methods
+// **************************************************
+
+    /**
+     * @brief Retrieve operator name for assignment
+     * @return Operator name of class
+     */
     public String getName (){
 	return "=";
     }
-
+    
+    /**
+     * @brief Determines precedence order of where to use parenthesis
+     * @return The priority of the class
+     */
     public int getPriority () {
-	return 200; //?
+	return 200;
     }
 
+
+    /**
+     * @brief Determines equality between undetermined object and object of class Assignment
+     * @param other undetermined object
+     * @return true if equal, else false
+     */
     public boolean equals(Object other){
 	if (other instanceof Assignment) {
 	    return this.equals((Binary) other);
@@ -22,13 +55,18 @@ public class Assignment extends Binary {
 	}
     }
 
+    /**
+     * @brief Evaluates SymbolicExpressions
+     * @param vars Hashmap containing SymbolicExpressions to be evaluated
+     * @return ???????????????????????++
+     */
     public SymbolicExpression eval(Environment vars){
 	SymbolicExpression lhs = this.getLhs().eval(vars);
 	SymbolicExpression rhs = this.getRhs();
 	if (rhs.isVariable()){
 	    vars.put((Variable)rhs, lhs);
 	} else {
-	    throw new IllegalExpressionException("Right hand side expression may not be a named constant"); //TODO is this the best type of exception
+	    throw new IllegalExpressionException("Right hand side expression may not be a named constant");
 	}
 	return lhs;
     }
