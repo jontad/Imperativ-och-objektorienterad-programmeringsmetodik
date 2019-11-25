@@ -1,5 +1,14 @@
 package org.ioopm.calculator.ast;
 
+
+/**
+ * @file Vars.java 
+ * @author Patrik Johansson, Jonathan Tadese 
+ * @date 15-11-2019
+ * @class Vars
+ * @brief Singleton Class for command Vars
+ */
+
 public class Vars extends Command {
     private boolean runOnce = false;
     private static final Vars theInstance = new Vars();
@@ -11,7 +20,7 @@ public class Vars extends Command {
     
        
     /**
-     * @brief Get the instance of the object
+     * @brief Get Vars singleton
      * @return The instance of Vars
      */ 
     public static Vars instance() {
@@ -29,7 +38,7 @@ public class Vars extends Command {
 
     /**
      * @brief Determines equality between object of type Vars and other undetermined object
-     * @param other Other variable to compare with current SymbolicExpression
+     * @param other Other Object to compare with this SymbolicExpression
      * @return true if equal, else false
      */
     public boolean equals(Object other){
@@ -38,14 +47,5 @@ public class Vars extends Command {
 	} else {
 	    return false;
 	}	
-    }
-
-    
-    /**
-     * @brief Evaluates class
-     * @return ????????????????
-     */
-    public SymbolicExpression eval(Environment vars){
-	return null;
     }
 }

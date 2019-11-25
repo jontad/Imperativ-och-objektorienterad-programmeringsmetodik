@@ -77,7 +77,7 @@ public abstract class SymbolicExpression {
 
     /**
      * @brief Evaluates SymbolicExpressions. Is overridden in subclasses
-     * @param vars Hashmap containing every SymbolicExpression
+     * @param vars Environment in which to evaluate expression
      * @return A new SymbolicExpression
      */
     public abstract SymbolicExpression eval(Environment vars);

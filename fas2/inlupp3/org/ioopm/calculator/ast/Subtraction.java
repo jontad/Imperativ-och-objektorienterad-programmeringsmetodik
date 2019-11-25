@@ -55,7 +55,7 @@ public class Subtraction extends Binary {
     
     /**
      * @brief Evaluates SymbolicExpressions
-     * @param vars Hashmap containing SymbolicExpressions to be evaluated
+     * @param vars Environment in which to evaluate expression
      * @return A new Constant if lhs and rhs are constants. Else new Subtraction
      */
     public SymbolicExpression eval(Environment vars){

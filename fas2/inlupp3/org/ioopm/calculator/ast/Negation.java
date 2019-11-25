@@ -1,5 +1,12 @@
 package org.ioopm.calculator.ast;
 
+/**
+ * @file Negation.java 
+ * @author Patrik Johansson, Jonathan Tadese 
+ * @date 15-11-2019
+ * @class Negation
+ * @brief Class for unary operator Negation
+ */
 public class Negation extends Unary {
 
     public Negation (SymbolicExpression expr){
@@ -10,11 +17,10 @@ public class Negation extends Unary {
 // Public methods
 // **************************************************   
 
-/**
- * @brief Retrieve operator name ("-")
- * @return Operator name 
- */
-    
+   /**
+    * @brief Retrieve operator name ("-")
+    * @return Operator name 
+    */
     public String getName (){
 	return "-";
     }
@@ -28,7 +34,7 @@ public class Negation extends Unary {
     }
 
     /**
-     * @brief Determines equality between undetermied object and object of clas Negation
+     * @brief Determines equality between undetermined object and object of Class Negation
      * @param other undetermined object
      * @return true if equal, else false
      */
@@ -42,8 +48,8 @@ public class Negation extends Unary {
 
     /**
      * @brief Evaluates SymbolicExpressions
-     * @param vars Hashmap containing SymbolicExpressions to be evaluated
-     * @return A new Constant if arguemnet is a constant. Else new Negation
+     * @param vars Environment in which to evaluate expression
+     * @return A new Constant if argument is a constant. Else new Negation
      */
     public SymbolicExpression eval(Environment vars){
 	SymbolicExpression arg = this.getExpr().eval(vars);

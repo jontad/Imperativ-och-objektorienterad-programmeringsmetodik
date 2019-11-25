@@ -1,5 +1,12 @@
 package org.ioopm.calculator.ast;
 
+/**
+ * @file Cos.java 
+ * @author Patrik Johansson, Jonathan Tadese 
+ * @date 15-11-2019
+ * @class Cos
+ * @brief Class for unary operator Cos
+ */
 public class Cos extends Unary {
 
     public Cos (SymbolicExpression expr){
@@ -27,7 +34,7 @@ public class Cos extends Unary {
     }
 
     /**
-     * @brief Determines equality between undetermied object and object of clas Cos
+     * @brief Determines equality between undetermied object and object of Class Cos
      * @param other undetermined object
      * @return true if equal, else false
      */
@@ -41,8 +48,8 @@ public class Cos extends Unary {
 
     /**
      * @brief Evaluates SymbolicExpressions
-     * @param vars Hashmap containing SymbolicExpressions to be evaluated
-     * @return A new Constant if arguemnet is a constant. Else new Cos
+     * @param vars Environment in which to evaluate expression
+     * @return A new Constant if argument is a constant. Else new Cos
      */
     public SymbolicExpression eval(Environment vars){
 	SymbolicExpression arg = this.getExpr().eval(vars);

@@ -1,5 +1,13 @@
 package org.ioopm.calculator.ast;
 
+/**
+ * @file Sin.java 
+ * @author Patrik Johansson, Jonathan Tadese 
+ * @date 15-11-2019
+ * @class Sin
+ * @brief Class for unary operator Sin
+ */
+
 public class Sin extends Unary {
     
     public Sin (SymbolicExpression expr){
@@ -11,7 +19,7 @@ public class Sin extends Unary {
 // **************************************************   
 
 /**
- * @brief Retrieve operator name ("sin")
+ * @brief Retrieve operator name
  * @return Operator name 
  */
     public String getName (){
@@ -27,7 +35,7 @@ public class Sin extends Unary {
     }
 
     /**
-     * @brief Determines equality between undetermied object and object of clas Sin
+     * @brief Determines equality between undetermied object and object of Class Sin
      * @param other undetermined object
      * @return true if equal, else false
      */
@@ -41,8 +49,8 @@ public class Sin extends Unary {
 
     /**
      * @brief Evaluates SymbolicExpressions
-     * @param vars Hashmap containing SymbolicExpressions to be evaluated
-     * @return A new Constant if arguemnet is a constant. Else new Sin
+     * @param vars Environment in which to evaluate expression
+     * @return A new Constant if argument is a constant. Else new Sin
      */
     public SymbolicExpression eval(Environment vars){
 	SymbolicExpression arg = this.getExpr().eval(vars);

@@ -40,7 +40,7 @@ public class Addition extends Binary {
     }
 
      /**
-     * @brief Determines equality between undetermied object and object of clas Addition
+     * @brief Determines equality between undetermied object and object of class Addition
      * @param other undetermined object
      * @return true if equal, else false
      */
@@ -54,7 +54,7 @@ public class Addition extends Binary {
 
     /**
      * @brief Evaluates SymbolicExpressions
-     * @param vars Hashmap containing SymbolicExpressions to be evaluated
+     * @param vars Environment in which to evaluate expression
      * @return A new Constant if lhs and rhs are constants. Else new Addition
      */
     public SymbolicExpression eval(Environment vars){

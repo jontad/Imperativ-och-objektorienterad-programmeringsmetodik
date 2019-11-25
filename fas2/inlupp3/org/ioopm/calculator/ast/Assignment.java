@@ -6,7 +6,7 @@ package org.ioopm.calculator.ast;
  * @author Patrik Johansson, Jonathan Tadese 
  * @date 15-11-2019
  * @class Assignment
- * @brief Class for binary operation Assignment. Simply assigns value.
+ * @brief Class for binary operation Assignment. Used to assign value to Variables.
  */
 
 
@@ -57,8 +57,8 @@ public class Assignment extends Binary
 
     /**
      * @brief Evaluates SymbolicExpressions
-     * @param vars Hashmap containing SymbolicExpressions to be evaluated
-     * @return ???????????????????????++
+     * @param vars Environment in which to evaluate expression
+     * @return Evaluation of lhs
      */
     public SymbolicExpression eval(Environment vars){
 	SymbolicExpression lhs = this.getLhs().eval(vars);

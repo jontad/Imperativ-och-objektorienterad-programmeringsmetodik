@@ -1,5 +1,12 @@
 package org.ioopm.calculator.ast;
 
+/**
+ * @file Exp.java 
+ * @author Patrik Johansson, Jonathan Tadese 
+ * @date 15-11-2019
+ * @class Exp
+ * @brief Class for unary operator Exp
+ */
 public class Exp extends Unary {
 
     public Exp (SymbolicExpression expr){
@@ -27,7 +34,7 @@ public class Exp extends Unary {
     }
 
     /**
-     * @brief Determines equality between undetermied object and object of clas Exp
+     * @brief Determines equality between undetermied object and object of Class Exp
      * @param other undetermined object
      * @return true if equal, else false
      */
@@ -41,8 +48,8 @@ public class Exp extends Unary {
 
     /**
      * @brief Evaluates SymbolicExpressions
-     * @param vars Hashmap containing SymbolicExpressions to be evaluated
-     * @return A new Constant if arguemnet is a constant. Else new Exp
+     * @param vars Environment in which to evaluate expression
+     * @return A new Constant if argument is a constant. Else new Exp
      */
     public SymbolicExpression eval(Environment vars){
 	SymbolicExpression arg = this.getExpr().eval(vars);

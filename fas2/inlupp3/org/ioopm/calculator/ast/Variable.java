@@ -1,16 +1,29 @@
 package org.ioopm.calculator.ast;
 
+/**
+ * @file Variable.java 
+ * @author Patrik Johansson, Jonathan Tadese 
+ * @date 15-11-2019
+ * @class Variable
+ * @brief Class for representing a Variable.
+ */
+
 public class Variable extends Atom {
     private String variableName;
     
-    public Variable (String name){
-	this.variableName = name;
-    }
+    
 
 // **************************************************
 // Public methods
 // **************************************************   
     
+     /**
+     * @brief Constructor for Variable
+     * @param name of variable
+     */
+    public Variable (String name){
+	this.variableName = name;
+    }
 
     /**
      * @brief Determines if object is variable
@@ -59,7 +72,7 @@ public class Variable extends Atom {
 
     /**
      * @brief Determines equality between objects of type Variable
-     * @param other Other variable to compare with current variable
+     * @param other Other Object to compare with this variable
      * @return true if equal, else false
      */
     public boolean equals(Variable other){
@@ -77,8 +90,8 @@ public class Variable extends Atom {
         
     /**
      * @brief Evaluates SymbolicExpressions
-     * @param vars Hashmap containing SymbolicExpressions to be evaluated
-     * @return A new variable if expression is not null. Else correspondening expression to current variable in vars
+     * @param vars Environment in which to evaluate expression
+     * @return SymbolicExpression if Environment contains mapping for this Variable, else return new Variable
      */
     public SymbolicExpression eval(Environment vars){
 	SymbolicExpression other = new Variable(variableName);

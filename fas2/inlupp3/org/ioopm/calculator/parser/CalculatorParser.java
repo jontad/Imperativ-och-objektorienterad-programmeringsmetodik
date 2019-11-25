@@ -4,9 +4,23 @@ import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.IOException;
 
+/**
+ * @file CalculatorParser.java 
+ * @author Patrik Johansson, Jonathan Tadese 
+ * @date 15-11-2019
+ * @class CalculatorParser
+ * @brief Class for CalculatorParser. Used to parse Strings into valid SymbolicExpressions
+ */
 public class CalculatorParser {
     private StreamTokenizer st;
 
+
+    
+    /**
+     * @brief Parse a String into a valid SymbolicExpression
+     * @param parseString String to be parsed
+     * @return a new Symbolicexpression if the String contained valid syntax, else null
+     */
     public SymbolicExpression parse(String parseString){
 	st = new StreamTokenizer(new StringReader(parseString));
 	st.ordinaryChar('-');
@@ -25,12 +39,22 @@ public class CalculatorParser {
     private SymbolicExpression Unexpected() throws IOException{
 	this.st.nextToken();
 	String unexpected;
-	if (this.st.ttype == this.st.TT_WORD){
+	switch(this.st.ttype){
+	case StreamTokenizer.TT_WORD:
 	    unexpected = this.st.sval;
-	} else if (this.st.ttype == this.st.TT_NUMBER) {
+	    break;
+	case StreamTokenizer.TT_NUMBER:
 	    unexpected = Double.toString(this.st.nval);
-	} else {
+	    break;
+	case StreamTokenizer.TT_EOF:
+	    unexpected = "EOF";
+	    break;
+	case StreamTokenizer.TT_EOL:
+	    unexpected = "EOL";
+	    break;
+	default:
 	    unexpected = Character.toString(this.st.ttype);
+	    break;
 	}
 	throw new SyntaxErrorException ("Unexpected: " + unexpected);
     }

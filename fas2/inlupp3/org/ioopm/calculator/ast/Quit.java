@@ -1,5 +1,13 @@
 package org.ioopm.calculator.ast;
 
+/**
+ * @file Quit.java 
+ * @author Patrik Johansson, Jonathan Tadese 
+ * @date 15-11-2019
+ * @class Quit
+ * @brief Singleton Class for command Quit
+ */
+
 public class Quit extends Command {
     private boolean runOnce = false;
     private static final Quit theInstance = new Quit();
@@ -14,7 +22,7 @@ public class Quit extends Command {
 // **************************************************   
        
     /**
-     * @brief Used to quit the program
+     * @brief Get Quit singleton
      * @return The instance of Quit
      */ 
     public static Quit instance(){
@@ -31,7 +39,7 @@ public class Quit extends Command {
 
     /**
      * @brief Determines equality between object of type Quit and other undetermined object
-     * @param other Other variable to compare with current SymbolicExpression
+     * @param other Other Object to compare with this SymbolicExpression
      * @return true if equal, else false
      */
     public boolean equals(Object other){
@@ -42,11 +50,4 @@ public class Quit extends Command {
 	}	
     }
 
-    /**
-     * @brief Evaluates class
-     * @return ????????????????
-     */
-    public SymbolicExpression eval(Environment vars){
-	return null;
-    }
 }

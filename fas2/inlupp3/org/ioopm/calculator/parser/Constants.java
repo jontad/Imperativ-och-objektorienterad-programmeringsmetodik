@@ -1,5 +1,12 @@
 package org.ioopm.calculator.parser;
 
+/**
+ * @file Constants.java 
+ * @author Patrik Johansson, Jonathan Tadese 
+ * @date 15-11-2019
+ * @class Constants
+ * @brief Class for defining named constants
+ */
 import java.util.HashMap;
 
 public class Constants{

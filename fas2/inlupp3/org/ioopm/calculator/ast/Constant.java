@@ -1,5 +1,13 @@
 package org.ioopm.calculator.ast;
 
+/**
+ * @file Constant.java 
+ * @author Patrik Johansson, Jonathan Tadese 
+ * @date 15-11-2019
+ * @class Constant
+ * @brief Class for representing constant values.
+ */
+
 public class Constant extends Atom {
 
 // **************************************************
@@ -15,7 +23,7 @@ public class Constant extends Atom {
 // **************************************************
 
      /**
-     * @brief Sets value of constant
+     * @brief Creates new Constant with a given value
      * @param value Value of constant 
      */
     public Constant (double value){
@@ -67,8 +75,8 @@ public class Constant extends Atom {
     }
 
      /**
-     * @brief Determines equality between Constant and SymbolicExpression
-     * @param other Other Object to compare with current constant
+     * @brief Determines equality between Constant and other Object
+     * @param other Other Object to compare with this constant
      * @return true if other is a constant and they are equal, else false
      */
     public boolean equals(Object other){
@@ -81,7 +89,7 @@ public class Constant extends Atom {
 
     /**
      * @brief Determines equality between Constants
-     * @param other Other Constant to compare with current Constant  
+     * @param other Other Constant to compare with this Constant  
      * @return true if equal, else false
      */
     public boolean equals(Constant other){
@@ -90,7 +98,7 @@ public class Constant extends Atom {
 
     /**
      * @brief Evaluates SymbolicExpressions
-     * @param vars Hashmap containing SymbolicExpressions to be evaluated
+     * @param vars Environment in which to evaluate expression
      * @return A new constant 
      */
     public SymbolicExpression eval(Environment vars){

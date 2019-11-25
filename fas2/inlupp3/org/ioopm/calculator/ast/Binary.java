@@ -59,9 +59,9 @@ public abstract class Binary extends SymbolicExpression {
 // **************************************************
     
     /**
-     * @brief Determines equality between Binary and SymbolicExpression
-     * @param other Other Object to compare with current binary
-     * @return true if other is a constant and they are equal, else false
+     * @brief Determines equality to other Object
+     * @param other Other Object to compare with this binary
+     * @return true if other is a Binary and they are equal, else false
      */
     public boolean equals(Object other){
 	if (other instanceof Binary) {
@@ -73,7 +73,7 @@ public abstract class Binary extends SymbolicExpression {
     
     /**
      * @brief Determines equality between objects of class Binary
-     * @param other Other Binary to compare with current binary  
+     * @param other Other Binary to compare with this binary  
      * @return true if equal, else false
      */
     public boolean equals(Binary other){
@@ -81,8 +81,8 @@ public abstract class Binary extends SymbolicExpression {
     }
     
     /**
-     * @brief Prints full binary expression
-     * @return Full binary expression
+     * @brief Creates String representation of Binary expression
+     * @return String version of binary expression
      */
      public String toString (){
 	String leftString = lhs.toString();
