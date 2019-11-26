@@ -1,6 +1,7 @@
 import org.junit.Test;
 import junit.framework.TestCase;
 import static org.junit.Assert.assertEquals;
+import java.io.IOException;
 
 import org.ioopm.calculator.parser.*;
 import org.ioopm.calculator.ast.*;
@@ -356,7 +357,6 @@ public class TestSuite extends TestCase {
 
 	Negation neg = new Negation(con2);
 
-
 	
 	Environment vars = new Environment();
 
@@ -392,9 +392,77 @@ public class TestSuite extends TestCase {
 
 	//Negation
 	assertEquals(con5, neg.eval(vars));
-
 	
     }
     
+    @Test
+    public void testParser() {
+	SymbolicExpression c = new Constant(10);
+	SymbolicExpression con = new Constant(10);
+	String conS = con.toString();
+	
+	SymbolicExpression var = new Variable("var");
+	String varS = var.toString();
+	
+	SymbolicExpression sin = new Sin(c);
+	String sinS = sin.toString();
+
+	SymbolicExpression add = new Addition(c, c);
+	String addS = add.toString();
+	
+	SymbolicExpression sub = new Subtraction(c, c);
+	String subS = sub.toString();
+	
+	SymbolicExpression mult = new Multiplication(c, c);
+	String multS = mult.toString();
+
+	SymbolicExpression a = new Addition(var, c);
+	SymbolicExpression b = new Multiplication(a, a);
+	SymbolicExpression negation = new Negation(new Negation(new Negation(b)));
+	String negationS = negation.toString();
+
+	
+	CalculatorParser parser = new CalculatorParser();
+
+
+	SymbolicExpression symbCon = parser.parse(conS);
+	assertEquals(symbCon, con);
+
+	SymbolicExpression symbVar = parser.parse(varS);
+	assertEquals(symbVar, var);
+
+	SymbolicExpression symbSin = parser.parse(sinS);
+	assertEquals(symbSin, sin);
+
+	SymbolicExpression symbAdd = parser.parse(addS);
+	assertEquals(symbAdd, add);
+
+	SymbolicExpression symbSub = parser.parse(subS);
+	assertEquals(symbSub, sub);
+
+	SymbolicExpression symbMult = parser.parse(multS);
+	assertEquals(symbMult, mult);
+
+	SymbolicExpression symbNegation = parser.parse(negationS);
+	assertEquals(symbNegation, negation);
+	assertTrue(symbNegation.equals(negation));
+	/*
+	try{
+	    SymbolicExpression expectingFailure = parser.parse(" ");
+	    assertFalse(false);
+	} catch(IOException e) {
+	    assertTrue(true);
+	}
+	
+	try{
+	    SymbolicExpression expectingFailure = parser.parse("(5 + ");
+	    assertFalse(false);
+	} catch(IOException e) {
+	    assertTrue(true);
+	}
+	*/
+    }
+	
+	
     
 }

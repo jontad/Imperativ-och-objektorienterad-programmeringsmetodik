@@ -5,6 +5,12 @@ comp:
 run:	comp
 	java org.junit.runner.JUnitCore TestSuite
 
+text: 
+	java -cp classes org.ioopm.calculator.Calculator < input.txt > output.txt
+
+
+diff:	text
+	diff expected_output.txt output.txt
 
 
 all:

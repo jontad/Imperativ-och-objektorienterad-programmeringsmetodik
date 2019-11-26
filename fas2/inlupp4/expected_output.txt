@@ -1,0 +1,24 @@
+a
+2.0
+*** Syntax Error: Invalid identifier
+4.0
+a + 4.0
+Infinity
+*** Syntax Error: Unexpected: *
+*** Syntax Error: Expected ')'
+-(-(-(x)))
+*** Syntax Error: Unexpected: +
+6.0
+0.1
+2.0
+1.0
+0.0
+23.0
+23.0 + a + 4.0
+(23.0 + a + 4.0) * (23.0 + a + 4.0) * (23.0 + a + 4.0)
+9.141592653589793
+*** Illegal Expression: Right hand side expression may not be a named constant
+Goodbye!
+You entered 21 Expressions
+15 of them were evaluated successfully
+10 of those were evaluated fully.
