@@ -1,6 +1,7 @@
 package org.ioopm.calculator;
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.parser.*;
+
 import java.util.Scanner;
 
 /**
@@ -10,38 +11,48 @@ import java.util.Scanner;
  * @class Calculator
  * @brief Class for utilizing the Calculator
  */
-public class Calculator {
+public class Calculator {  
         
     public static void main(String args[]){
 	final CalculatorParser parser = new CalculatorParser();
-        final Environment vars = new Environment();
+        final Environment env = new Environment();
+
+	
 	Scanner scan = new Scanner(System.in);
 
 	int entered = 0, evaluated = 0, fullyEvaluated = 0;
 
+	System.out.println("Welcome to the parser!");
 	while (true){
 	    String input = scan.nextLine(); 
 	    entered++;
 	    try {
-		SymbolicExpression expr = parser.parse(input);
+		SymbolicExpression topLevel = parser.parse(input);
     
-		if (expr.equals(Quit.instance())){
+		if (topLevel.equals(Quit.instance())){
 		    System.out.println("Goodbye!\nYou entered " + entered + " Expressions"
 				       +"\n" + evaluated + " of them were evaluated successfully"
 				       +"\n" + fullyEvaluated + " of those were evaluated fully.");
 		    break;
-		} else if (expr.equals(Vars.instance())){
-		    System.out.println(vars);
-		} else if (expr.equals(Clear.instance())){
-		    vars.clear();
+		} else if (topLevel.equals(Vars.instance())){
+		    System.out.println(env);
+		} else if (topLevel.equals(Clear.instance())){
+		    env.clear();
 		} else {
 		    try {
-			SymbolicExpression result = expr.eval(vars);
-			System.out.println(result);
-			vars.put(new Variable("ans"), result);
-			evaluated++;
-			if (result.isConstant()){
-			    fullyEvaluated++;
+			final NamedConstantChecker checker = new NamedConstantChecker();
+			final ReassignmentChecker reassCheck =  new ReassignmentChecker();
+
+			if(checker.check(topLevel) && reassCheck.check(topLevel)) {
+			    final EvaluationVisitor evaluator = new EvaluationVisitor();
+			    final SymbolicExpression result = evaluator.evaluate(topLevel, env);
+			    System.out.println(result);
+
+			    env.put(new Variable("ans"), result);
+			    evaluated++;
+			    if (result.isConstant()){
+				fullyEvaluated++;
+			    }
 			}
 		    } catch (IllegalExpressionException e){
 		        System.out.println("*** Illegal Expression: " + e.getMessage());

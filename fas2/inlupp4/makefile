@@ -12,6 +12,11 @@ text:
 diff:	text
 	diff expected_output.txt output.txt
 
+rm:
+	rm org/ioopm/calculator/ast/*.java~
+	rm org/ioopm/calculator/*.java~	
+
+
 
 all:
 	find org/ioopm/calculator/ |grep .java|xargs javac -d classes
