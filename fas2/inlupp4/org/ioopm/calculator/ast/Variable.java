@@ -8,7 +8,7 @@ package org.ioopm.calculator.ast;
  * @brief Class for representing a Variable.
  */
 
-public class Variable extends Atom implements Comparable<Variable> { ///TODO: Helt osäker på detta. Kolla Ticket 2 step 3 !!!!!!!!!!
+public class Variable extends Atom implements Comparable<Variable> {
     private String variableName;
    
      /**

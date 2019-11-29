@@ -1,10 +1,21 @@
 package org.ioopm.calculator.ast;
+import java.util.Stack;
+
+
+/**
+ * @file EvaluationVisitor.java 
+ * @author Elias Insulander, Jonathan Tadese 
+ * @date 29-11-2019
+ * @class EvaluationVisitor
+ * @brief Class containing method that evaluates different Symbolicexpressions
+ */
+
 
 public class EvaluationVisitor implements Visitor {
-    private Environment env = null;
+    private Stack<Environment> stack = new Stack<Environment>();
 
     public SymbolicExpression evaluate(SymbolicExpression topLevel, Environment env) {
-	this.env = env;
+	this.stack.push(env);
 	return topLevel.accept(this);
     }
    
@@ -60,7 +71,7 @@ public class EvaluationVisitor implements Visitor {
 	SymbolicExpression right = n.getRhs();
 	
 	if (right.isVariable()) {
-	    env.put((Variable) right, left);
+	    stack.peek().put((Variable) right, left);
 	} else {
 	    throw new IllegalExpressionException("Right hand side expression may not be a named constant");
 	}
@@ -69,12 +80,21 @@ public class EvaluationVisitor implements Visitor {
 
 
     public SymbolicExpression visit(Variable n) {
-	SymbolicExpression expr = env.get(n);
+        Environment savedEnv = stack.pop(); // ta bort och plocka
+	SymbolicExpression expr;
+	if(stack.empty()) {      
+	    expr = savedEnv.get(n);
+	} else {
+	    expr = stack.peek().get(n);
+	}
+	stack.push(savedEnv);
+	
 	if (expr != null) {
 	    return expr;
 	} else {
 	    return n;
 	}
+		
     }
 
     public SymbolicExpression visit(Constant n) {
@@ -126,12 +146,72 @@ public class EvaluationVisitor implements Visitor {
 	}
     }
 
-    
     public SymbolicExpression visit(Quit n) {
 	throw new RuntimeException("Attempted to visit a Command");
     }
 
     public SymbolicExpression visit(Vars n) {
 	throw new RuntimeException("Attempted to visit a Command");
+    }
+
+     
+    public SymbolicExpression visit(Scope n) {
+	Environment localEnv = new Environment();
+	stack.push(localEnv);
+
+	SymbolicExpression arg = n.getExpr().accept(this);
+	stack.pop();
+
+	return arg;
+    }
+
+    public SymbolicExpression visit(Conditional n) {
+	SymbolicExpression lVar = n.getLeftVar().accept(this);
+	SymbolicExpression rVar = n.getRightVar().accept(this);
+
+	SymbolicExpression lScope = n.getLeftScope();
+	SymbolicExpression rScope = n.getRightScope();
+
+
+	String op = n.getOperator();
+	if(lVar.isConstant() && rVar.isConstant()){
+	    
+	    if(op == "<"){
+		if(lVar.getValue() < rVar.getValue()){
+		    lScope.accept(this);
+		} else {
+		    rScope.accept(this);
+		}
+
+	    } else if(op == ">"){
+			if(lVar.getValue() > rVar.getValue()){
+			    lScope.accept(this);
+			} else {
+			    rScope.accept(this);
+			}	
+	    
+		    } else if(op == "<="){
+			if(lVar.getValue() <= rVar.getValue()){
+			    lScope.accept(this);
+			} else {
+			    rScope.accept(this);
+			}	
+	    
+		    }else if(op == ">="){
+			if(lVar.getValue() >= rVar.getValue()){
+			    lScope.accept(this);
+			} else {
+			    rScope.accept(this);
+			}	
+	    
+		    } else if(op == "=="){
+			if(lVar.getValue() == rVar.getValue()){
+			    lScope.accept(this);
+			} else {
+			    rScope.accept(this);
+			}	
+	    
+		    }
+	}
     }
 }

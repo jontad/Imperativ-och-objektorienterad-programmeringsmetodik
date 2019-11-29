@@ -1,6 +1,15 @@
 package org.ioopm.calculator.ast;
 
 
+/**
+ * @file NamedConstantChecker.java 
+ * @author Elias Insulander, Jonathan Tadese 
+ * @date 29-11-2019
+ * @class NamedConstantChecker
+ * @brief Class for checking variable is named, i.e. pi, e.
+ */
+
+
 public class NamedConstantChecker implements Visitor {
 
 
@@ -89,5 +98,16 @@ public class NamedConstantChecker implements Visitor {
 
     public SymbolicExpression visit(Vars v) {
         return v;
+    }
+
+    public SymbolicExpression visit(Scope s) {
+	s.getExpr().accept(this);
+	return s;
+    }
+
+    public SymbolicExpression visit(Conditional c) {
+	c.getLeftScope().accept(this);
+	c.getRightScope().accept(this);
+	return c;
     }
 }

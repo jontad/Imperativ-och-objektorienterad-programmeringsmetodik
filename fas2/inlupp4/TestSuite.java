@@ -462,7 +462,37 @@ public class TestSuite extends TestCase {
 	}
 	*/
     }
-	
-	
+    //eval()
+    @Test
+    public void testScopes() {
+	CalculatorParser parser = new CalculatorParser();
+	final EvaluationVisitor evaluator = new EvaluationVisitor();
+	Environment env = new Environment();
+
+	SymbolicExpression parsedScope1 = parser.parse("{{1 = x} = x} = y");
+	final SymbolicExpression result = evaluator.evaluate(parsedScope1, env);
+	assertEquals(result.toString(), "1.0");
+
+	SymbolicExpression parsedX = parser.parse("x");
+	result = evaluator.evaluate(parsedX, env);
+	assertEquals(result.toString(), "x");
+
+	SymbolicExpression parsedY = parser.parse("y");
+	result = evaluator.evaluate(parsedY, env);
+	assertEquals(result.toString(), "1.0");	
+
+
+	SymbolicExpression parsedScope2 = parser.parse("(1 = x) + {(2 + x = x) + {3 + x = x}}");
+        result = evaluator.evaluate(parsedScope2, env);
+	assertEquals(result.toString(), "10.0");
+
+	SymbolicExpression parsedScope3 = parser.parse("{{1 = x} = x}");
+	result = evaluator.evaluate(parsedScope3, env);
+	assertEquals(result.toString(), "1.0");
+
+	SymbolicExpression parsedScope4 = parser.parse(" {(2 = x) + {1 = x}}");
+	result = evaluator.evaluate(parsedScope4, env);
+	assertEquals(result.toString(), "3.0");
+    }
     
 }

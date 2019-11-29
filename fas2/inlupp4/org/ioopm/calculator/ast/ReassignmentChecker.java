@@ -1,12 +1,23 @@
 package org.ioopm.calculator.ast;
+import java.util.Stack;
+
+
+/**
+ * @file ReassignmentChecker.java 
+ * @author Elias Insulander, Jonathan Tadese 
+ * @date 29-11-2019
+ * @class ReassignmentChecker
+ * @brief Class for checking if variable has been assigned
+ */
 
 
 public class ReassignmentChecker implements Visitor {
-    Environment usedVariables = new Environment();
+    private Stack<Environment> usedVariables = new Stack<Environment>();
 
 
     public boolean check(SymbolicExpression expression){
 	try {
+	    usedVariables.push(new Environment());
 	    expression.accept(this);
 	    return true;
 	} catch (IllegalExpressionException e) {
@@ -17,10 +28,10 @@ public class ReassignmentChecker implements Visitor {
     
     public SymbolicExpression visit(Assignment a){
 	a.getRhs().accept(this);
-	if(usedVariables.containsKey(a.getRhs())){
+	if(usedVariables.peek().containsKey(a.getRhs())){
 	    throw new IllegalExpressionException("Error, the variable " + a.getRhs() + " is reassigned.");
 	} else {
-	    usedVariables.put((Variable) a.getRhs(), a.getLhs());
+	    usedVariables.peek().put((Variable) a.getRhs(), a.getLhs());
 	}
 	return a; 
     }
@@ -89,5 +100,22 @@ public class ReassignmentChecker implements Visitor {
 
     public SymbolicExpression visit(Vars v) {
         return v;
+    }
+
+    public SymbolicExpression visit(Scope s) {
+	Environment localEnv = new Environment();
+	usedVariables.push(localEnv);
+
+	SymbolicExpression arg = s.getExpr().accept(this);
+	usedVariables.pop();
+
+	return arg;
+    }
+
+    public SymbolicExpression visit(Conditional c) {
+        c.getLeftScope().accept(this);
+	c.getRightScope().accept(this);
+
+	return c;
     }
 }

@@ -36,8 +36,10 @@ public class Calculator {
 		    break;
 		} else if (topLevel.equals(Vars.instance())){
 		    System.out.println(env);
+
 		} else if (topLevel.equals(Clear.instance())){
 		    env.clear();
+
 		} else {
 		    try {
 			final NamedConstantChecker checker = new NamedConstantChecker();
