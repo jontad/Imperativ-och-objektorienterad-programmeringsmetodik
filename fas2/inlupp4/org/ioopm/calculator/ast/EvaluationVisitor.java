@@ -147,11 +147,11 @@ public class EvaluationVisitor implements Visitor {
     }
 
     public SymbolicExpression visit(Quit n) {
-	throw new RuntimeException("Attempted to visit a Command");
+	throw new IllegalExpressionException("Attempted to evaluate command");
     }
 
     public SymbolicExpression visit(Vars n) {
-	throw new RuntimeException("Attempted to visit a Command");
+	throw new IllegalExpressionException("Attempted to evaluate Command");
     }
 
      
@@ -166,52 +166,17 @@ public class EvaluationVisitor implements Visitor {
     }
 
     public SymbolicExpression visit(Conditional n) {
-	SymbolicExpression lVar = n.getLeftVar().accept(this);
-	SymbolicExpression rVar = n.getRightVar().accept(this);
-
-	SymbolicExpression lScope = n.getLeftScope();
-	SymbolicExpression rScope = n.getRightScope();
-
-
-	String op = n.getOperator();
-	if(lVar.isConstant() && rVar.isConstant()){
-	    
-	    if(op == "<"){
-		if(lVar.getValue() < rVar.getValue()){
-		    lScope.accept(this);
-		} else {
-		    rScope.accept(this);
-		}
-
-	    } else if(op == ">"){
-			if(lVar.getValue() > rVar.getValue()){
-			    lScope.accept(this);
-			} else {
-			    rScope.accept(this);
-			}	
-	    
-		    } else if(op == "<="){
-			if(lVar.getValue() <= rVar.getValue()){
-			    lScope.accept(this);
-			} else {
-			    rScope.accept(this);
-			}	
-	    
-		    }else if(op == ">="){
-			if(lVar.getValue() >= rVar.getValue()){
-			    lScope.accept(this);
-			} else {
-			    rScope.accept(this);
-			}	
-	    
-		    } else if(op == "=="){
-			if(lVar.getValue() == rVar.getValue()){
-			    lScope.accept(this);
-			} else {
-			    rScope.accept(this);
-			}	
-	    
-		    }
+	SymbolicExpression left = n.getLeft().accept(this);
+	SymbolicExpression right = n.getRight().accept(this);
+	
+	if(left.isConstant() && right.isConstant()) {
+	    if(n.compareConstants(left.getValue(), right.getValue())) {
+		return n.getLeftScope().accept(this);
+	    } else {
+		return n.getRightScope().accept(this);
+	    }
+	} else {
+	    throw new IllegalExpressionException("Conditional using free variable(s)");
 	}
     }
 }
