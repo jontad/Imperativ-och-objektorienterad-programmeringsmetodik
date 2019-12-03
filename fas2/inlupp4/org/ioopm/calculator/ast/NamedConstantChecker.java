@@ -1,5 +1,5 @@
 package org.ioopm.calculator.ast;
-
+import java.util.LinkedList;
 
 /**
  * @file NamedConstantChecker.java 
@@ -11,10 +11,13 @@ package org.ioopm.calculator.ast;
 
 
 public class NamedConstantChecker implements Visitor {
+    private FunctionEnv funcEnv = null;
 
+    public NamedConstantChecker(FunctionEnv funcEnv){
+	this.funcEnv = funcEnv;
+    } 
 
-    public boolean check(SymbolicExpression expression)
-    {
+    public boolean check(SymbolicExpression expression) {
 	try {
 	    expression.accept(this);
 	    return true;
@@ -110,4 +113,34 @@ public class NamedConstantChecker implements Visitor {
 	c.getRightScope().accept(this);
 	return c;
     }
+
+
+     public SymbolicExpression visit(FunctionCall f) {
+	String id = f.getIdentifier();
+	if(funcEnv.containsKey(id)){
+	    Sequence seq = funcEnv.get(id);
+	    seq.accept(this);
+	} else {
+	    throw new IllegalExpressionException("Function does not exist");
+	}
+	return f;
+    }
+
+
+     public SymbolicExpression visit(FunctionDeclaration f) {
+	 Sequence seq =  f.getSequence();
+	 seq.accept(this);
+	 return f;
+     }
+
+
+     public SymbolicExpression visit(Sequence s) {
+	 LinkedList<SymbolicExpression> funcList =  s.getFuncList();
+	 
+	 for(SymbolicExpression func : funcList){
+	     func.accept(this);
+	 }
+	 return s;
+     }
+
 }

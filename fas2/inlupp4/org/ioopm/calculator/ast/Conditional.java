@@ -31,43 +31,33 @@ public class Conditional extends SymbolicExpression{
 	this.rightScope = rightScope;
     }
 
-    // **************************************************
-    // Public methods
-    // **************************************************
-
-
+// **************************************************
+// Public methods
+// **************************************************
    
     /**
      * @brief Get-method used to retrieve Scope 
      * @return Scope used in if-else statement
      */
-    public Scope getLeftScope(){
-	return this.leftScope;
-    }
+    public Scope getLeftScope() {return this.leftScope;}
     
     /**
      * @brief Get-method used to retrieve Scope 
      * @return Scope used in if-else statement
      */
-    public Scope getRightScope(){
-	return this.rightScope;
-    }
+    public Scope getRightScope() {return this.rightScope;}
 
     /**
      * @brief Get-method used to retrieve SymbolicExpression 
      * @return SymbolicExpression used in if-else statement
      */
-    public SymbolicExpression getLeft(){
-	return this.left;
-    }
+    public SymbolicExpression getLeft() {return this.left;}
 
     /**
      * @brief Get-method used to retrieve SymbolicExpression 
      * @return SymbolicExpression used in if-else statement
      */
-    public SymbolicExpression getRight(){
-	return this.right;
-    }
+    public SymbolicExpression getRight() {return this.right;}
     
   
 

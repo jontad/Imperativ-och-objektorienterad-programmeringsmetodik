@@ -1,6 +1,6 @@
 package org.ioopm.calculator.ast;
 import java.util.Stack;
-
+import java.util.LinkedList;
 
 /**
  * @file ReassignmentChecker.java 
@@ -13,7 +13,13 @@ import java.util.Stack;
 
 public class ReassignmentChecker implements Visitor {
     private Stack<Environment> usedVariables = new Stack<Environment>();
+    private FunctionEnv funcEnv = null;
 
+    public ReassignmentChecker(FunctionEnv funcEnv){
+	this.funcEnv = funcEnv;
+    } 
+    
+    
 
     public boolean check(SymbolicExpression expression){
 	try {
@@ -118,4 +124,38 @@ public class ReassignmentChecker implements Visitor {
 
 	return c;
     }
+
+    
+
+     public SymbolicExpression visit(FunctionCall f) {
+	String id = f.getIdentifier();
+	if(funcEnv.containsKey(id)){
+	    Sequence seq = funcEnv.get(id);
+	    seq.accept(this);
+	} else {
+	    throw new IllegalExpressionException("Function does not exist");
+	}
+	return f;
+    }
+
+
+     public SymbolicExpression visit(FunctionDeclaration f) {
+	 Sequence seq =  f.getSequence();
+	 seq.accept(this);
+	 return f;
+     }
+
+
+     public SymbolicExpression visit(Sequence s) {
+	 Environment localEnv = new Environment();
+	 LinkedList<SymbolicExpression> funcList =  s.getFuncList();
+
+	 usedVariables.push(localEnv);
+	 for(SymbolicExpression func : funcList){
+	     func.accept(this);
+	 }
+	 usedVariables.pop();
+	 return s;
+     }
+
 }

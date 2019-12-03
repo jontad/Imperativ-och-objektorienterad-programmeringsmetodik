@@ -62,17 +62,44 @@ public class CalculatorParser {
     }
 
     private SymbolicExpression top_level() throws IOException{
-	SymbolicExpression state = statement();
 	this.st.nextToken();
-	if (this.st.ttype == this.st.TT_EOL || this.st.ttype == this.st.TT_EOF){
-	    return state;
-	} else {
-	    this.st.pushBack();
-	    return Unexpected();
+	if(this.st.ttype == this.st.TT_WORD || this.st.sval.toLowerCase().equals("function")){
+	    return function();
+	} else {    
+	    SymbolicExpression state = statement();
+	    if (this.st.ttype == this.st.TT_EOL || this.st.ttype == this.st.TT_EOF){
+		return state;
+	    } else {
+		this.st.pushBack();
+		return Unexpected();
+	    }
 	}
     }
-    private SymbolicExpression statement() throws IOException{
+
+    private SymbolicExpression function() throws IOException{
 	this.st.nextToken();
+
+	if(this.st.ttype == TT_WORD){
+	    String funcName = this.st.sval;
+
+	    if(this.st.nextToken() == '('){
+		if(this.st.nextToken() != TT_NUMBER){
+
+		} else {
+		    Unexpected();
+		}
+		
+	    } else {
+		Unexpected();
+	    }
+	    
+	} else {
+	    Unexpected();
+	}
+    }
+    
+    private SymbolicExpression statement() throws IOException{
+	//this.st.nextToken();
 	if (this.st.ttype == this.st.TT_WORD){
 	    String command = this.st.sval.toLowerCase();
 	    if (command.equals("quit") || command.equals("vars") || command.equals("clear")){

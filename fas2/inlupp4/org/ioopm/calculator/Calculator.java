@@ -16,7 +16,7 @@ public class Calculator {
     public static void main(String args[]){
 	final CalculatorParser parser = new CalculatorParser();
         final Environment env = new Environment();
-
+	final EvaluationVisitor evaluator = new EvaluationVisitor(); //kanske nere?
 	
 	Scanner scan = new Scanner(System.in);
 
@@ -42,11 +42,11 @@ public class Calculator {
 
 		} else {
 		    try {
-			final NamedConstantChecker checker = new NamedConstantChecker();
-			final ReassignmentChecker reassCheck =  new ReassignmentChecker();
+			final NamedConstantChecker checker = new NamedConstantChecker(evaluator.getFuncEnv());
+			final ReassignmentChecker reassCheck =  new ReassignmentChecker(evaluator.getFuncEnv());
 
 			if(checker.check(topLevel) && reassCheck.check(topLevel)) {
-			    final EvaluationVisitor evaluator = new EvaluationVisitor();
+			   
 			    final SymbolicExpression result = evaluator.evaluate(topLevel, env);
 			    System.out.println(result);
 
