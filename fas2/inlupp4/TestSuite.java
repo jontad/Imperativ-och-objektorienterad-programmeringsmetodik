@@ -359,39 +359,40 @@ public class TestSuite extends TestCase {
 
 	
 	Environment vars = new Environment();
+	final EvaluationVisitor eval = new EvaluationVisitor();
 
 	//Constant
-	assertEquals(con1, con1.eval(vars));	
+	assertEquals(con1, eval.evaluate(con1, vars));	
 
 	//Assignment
-	assertEquals(con4, ass.eval(vars));
+	assertEquals(con4, eval.evaluate(ass, vars));
 
 	//Variable
-	assertEquals(con4, var1.eval(vars));
+	assertEquals(con4, eval.evaluate(var1, vars));
 
 	//Subtraction
-	assertEquals(con1, sub2.eval(vars));
+	assertEquals(con1, eval.evaluate(sub2, vars));
 	
 	//Addition
-	assertEquals(con3, add3.eval(vars));
+	assertEquals(con3, eval.evaluate(add3, vars));
 
 	//Multiplication
-	assertEquals(con4, mult3.eval(vars));
+	assertEquals(con4, eval.evaluate(mult3, vars));
 
 	//Division
-	assertEquals(con2, div.eval(vars));
+	assertEquals(con2, eval.evaluate(div, vars));
 
 	//Cos
-	assertEquals(con7, cos.eval(vars));
+	assertEquals(con7, eval.evaluate(cos, vars));
 
 	//Sin
-	assertEquals(con6, sin.eval(vars));
+	assertEquals(con6, eval.evaluate(sin, vars));
 
 	//Exp & Log
-	assertEquals(con4, log.eval(vars));
+	assertEquals(con4, eval.evaluate(log, vars));
 
 	//Negation
-	assertEquals(con5, neg.eval(vars));
+	assertEquals(con5, eval.evaluate(neg, vars));
 	
     }
     
@@ -446,23 +447,23 @@ public class TestSuite extends TestCase {
 	SymbolicExpression symbNegation = parser.parse(negationS);
 	assertEquals(symbNegation, negation);
 	assertTrue(symbNegation.equals(negation));
-	/*
+	
 	try{
 	    SymbolicExpression expectingFailure = parser.parse(" ");
 	    assertFalse(false);
-	} catch(IOException e) {
+	} catch(SyntaxErrorException e) {
 	    assertTrue(true);
 	}
 	
 	try{
 	    SymbolicExpression expectingFailure = parser.parse("(5 + ");
 	    assertFalse(false);
-	} catch(IOException e) {
+	} catch(SyntaxErrorException e) {
 	    assertTrue(true);
 	}
-	*/
+	
     }
-    //eval()
+    //Scopes
     @Test
     public void testScopes() {
 	CalculatorParser parser = new CalculatorParser();
@@ -470,7 +471,7 @@ public class TestSuite extends TestCase {
 	Environment env = new Environment();
 
 	SymbolicExpression parsedScope1 = parser.parse("{{1 = x} = x} = y");
-	final SymbolicExpression result = evaluator.evaluate(parsedScope1, env);
+	SymbolicExpression result = evaluator.evaluate(parsedScope1, env);
 	assertEquals(result.toString(), "1.0");
 
 	SymbolicExpression parsedX = parser.parse("x");
@@ -493,6 +494,63 @@ public class TestSuite extends TestCase {
 	SymbolicExpression parsedScope4 = parser.parse(" {(2 = x) + {1 = x}}");
 	result = evaluator.evaluate(parsedScope4, env);
 	assertEquals(result.toString(), "3.0");
+    }
+
+    //Conditional 
+    @Test
+    public void testConditionals() {
+	CalculatorParser parser = new CalculatorParser();
+	final EvaluationVisitor evaluator = new EvaluationVisitor();
+	Environment env = new Environment();
+
+	SymbolicExpression parsedConditional1 = parser.parse("if 3 < 5 {1 = x} else {x}");
+	SymbolicExpression result = evaluator.evaluate(parsedConditional1, env);
+	assertEquals(result.toString(), "1.0");
+	
+	SymbolicExpression parsedY = parser.parse("if (1 + 3 + 6) <= (2*5) {1} else {2}");
+	result = evaluator.evaluate(parsedY, env);
+	assertEquals(result.toString(), "1.0");	
+
+	
+	SymbolicExpression parsedX = parser.parse("1 = x");
+	parsedY = parser.parse("5 = y");
+	result = evaluator.evaluate(parsedX, env);
+	result = evaluator.evaluate(parsedY, env);
+	SymbolicExpression parsedConditional2 = parser.parse("if x < y {if x == 0 {1} else {2}} else {0}");
+        result = evaluator.evaluate(parsedConditional2, env);
+	assertEquals(result.toString(), "2.0");
+
+	try {
+	    SymbolicExpression parsedConditional = parser.parse("if x = y {1} else {0}");
+	    result = evaluator.evaluate(parsedConditional, env);
+	} catch (SyntaxErrorException e){
+	    assertEquals(e.getMessage(), "Expected ==");
+	} try {
+	    SymbolicExpression parsedConditional3 = parser.parse("if v == q {1} else {2}");
+	    result = evaluator.evaluate(parsedConditional3, env);
+	} catch (IllegalExpressionException e){
+	    assertEquals(e.getMessage(), "Conditional using free variable(s)");
+	} try {	    
+	    SymbolicExpression parsedConditional4 = parser.parse("if 1 >= 2");
+	    result = evaluator.evaluate(parsedConditional4, env);
+	} catch (SyntaxErrorException e){
+	    assertEquals(e.getMessage(), "Expected scope");
+	} try {
+	    parsedConditional1 = parser.parse("if x = y {1} else {0}");
+	    result = evaluator.evaluate(parsedConditional1, env);
+	} catch (SyntaxErrorException e){
+	    assertEquals(e.getMessage(), "Expected ==");
+	} try {
+	    parsedConditional1 = parser.parse("if v == q {1} else {2}");
+	    result = evaluator.evaluate(parsedConditional1, env);
+	} catch (IllegalExpressionException e){
+	    assertEquals(e.getMessage(), "Conditional using free variable(s)");
+	} try {
+	    parsedConditional1 = parser.parse("if 1 >= 2");
+	    result = evaluator.evaluate(parsedConditional1, env);
+	} catch (SyntaxErrorException e){
+	    assertEquals(e.getMessage(), "Expected scope");
+	}
     }
     
 }
