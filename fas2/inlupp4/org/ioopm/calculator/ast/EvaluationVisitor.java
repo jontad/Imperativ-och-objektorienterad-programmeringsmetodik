@@ -75,30 +75,28 @@ public class EvaluationVisitor implements Visitor {
 	SymbolicExpression right = n.getRhs();
 	
 	if (right.isVariable()) {
-	    stack.peek().put((Variable) right, left);
+	    this.stack.peek().put((Variable) right, left);
 	} else {
 	    throw new IllegalExpressionException("Right hand side expression may not be a named constant");
 	}
 	return left;
     }
 
-
+    
     public SymbolicExpression visit(Variable n) {
-        Environment savedEnv = stack.pop(); // ta bort och plocka
-	SymbolicExpression expr;
-	if(stack.empty()) {      
+        Stack<Environment> savedStack = (Stack<Environment>)stack.clone();
+	Environment savedEnv = savedStack.pop();
+	SymbolicExpression expr = savedEnv.get(n);
+
+	while(expr == null && !savedStack.empty()) {
+	    savedEnv = savedStack.pop();
 	    expr = savedEnv.get(n);
-	} else {
-	    expr = stack.peek().get(n);
 	}
-	stack.push(savedEnv);
-	
 	if (expr != null) {
 	    return expr;
 	} else {
 	    return n;
 	}
-		
     }
 
     public SymbolicExpression visit(Constant n) {
@@ -185,49 +183,45 @@ public class EvaluationVisitor implements Visitor {
     }
 
     
+    private void insertArgs(Sequence seq, LinkedList<String> argFunc, LinkedList<SymbolicExpression> argFuncCall){
+	LinkedList<SymbolicExpression> body = seq.getBody();
+	
+	int argCall =  argFuncCall.size();
+	for(int i = 0; i < argCall ; i ++){
+	    SymbolicExpression expr = argFuncCall.get(i);
+	    if (expr.isConstant() || expr.isVariable()) {
+		expr.accept(this);
+		if(expr.isConstant()){
+		    SymbolicExpression newVar =  new Variable(argFunc.get(i));
+		    body.addFirst(new Assignment(expr,newVar));
+		} else {
+		    throw new IllegalExpressionException("Variable is not assigned.");
+		}
+	    } else {
+		throw new IllegalExpressionException("Argument is not a constant or an identifier.");
+	    }
+	}
+    }
+
     public SymbolicExpression visit(FunctionDeclaration n) {
 	String funcName = n.getNameOfFunc();
 	Sequence seq = n.getSequence();
 
 	funcEnv.put(funcName, seq);
 
-	return new Variable(funcName);
+	return  new Variable("");
     }
-
-    private void insertArgs(LinkedList<String> argList, LinkedList<SymbolicExpression> listOfArg){
-	Environment localEnv = new Environment();
-
-	int argCall =  listOfArg.size();
-	 
-	for(int i = 0; i < argCall ; i ++){
-	    SymbolicExpression expr = listOfArg.get(i);
-	    if (expr.isConstant() || expr.isVariable()) {
-		expr.accept(this);
-		if(expr.isConstant()){
-		    localEnv.put(new Variable(argList.get(i)), expr);    
-		} else {
-		    throw new IllegalExpressionException("Variable is not assigned.");
-		}
-			
-	    } else {
-		throw new IllegalExpressionException("Argument is not a constant or an identifier.");
-	    }
-	}
-
-	stack.push(localEnv);
-    }
-
     
     public SymbolicExpression visit(FunctionCall n) {
+	Environment localEnv = new Environment();
 	String id = n.getIdentifier();
 	Sequence body = funcEnv.get(id);
-	
+
 	if(body == null){
 	    throw new IllegalExpressionException("Function does not exist");
 	} else {
-	    LinkedList<String> argList = body.getArgList(); //list of arguments for Sequence  
-
-	    LinkedList<SymbolicExpression> listOfArg = n.getListOfArg(); //list of arguments for FunctionCall  
+	    LinkedList<String> argFunc = body.getArgFunc(); //list of arguments for Sequence  
+	    LinkedList<SymbolicExpression> argFuncCall = n.getArgFuncCall(); //list of arguments for FunctionCall  
 
 	    int argSeq = body.amountOfArg();
 	    int argCall =  n.amountOfArg();
@@ -239,25 +233,24 @@ public class EvaluationVisitor implements Visitor {
 		throw new IllegalExpressionException("Error, function '" + id + "' called with too few arguments. Expected "
 						     + argSeq + ", got " + argCall);
 	    } else {
-		insertArgs(argList, listOfArg);
+		stack.push(localEnv);
+		insertArgs(body, argFunc, argFuncCall);
 		SymbolicExpression result = body.accept(this);
-
 		stack.pop();
 		return result;
 	    }
-	    
 	}
     }
 
     public SymbolicExpression visit(Sequence n) {
-	LinkedList<SymbolicExpression> funcList = n.getFuncList();
+	LinkedList<SymbolicExpression> body = n.getBody();
     
 	int counter = 1;
-	for(SymbolicExpression func : funcList){
-	    func.accept(this);
+	for(SymbolicExpression lineInFunc : body){
+	    lineInFunc.accept(this);
 
-	    if(counter == funcList.size()){
-		return func.accept(this);
+	    if(counter == body.size()){
+		return lineInFunc.accept(this);
 	    }
 	    counter++;
 	}

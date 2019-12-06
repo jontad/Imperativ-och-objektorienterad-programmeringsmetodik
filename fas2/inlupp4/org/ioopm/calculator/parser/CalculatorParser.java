@@ -3,6 +3,7 @@ import org.ioopm.calculator.ast.*;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.IOException;
+import java.util.LinkedList;
 
 /**
  * @file CalculatorParser.java 
@@ -13,9 +14,7 @@ import java.io.IOException;
  */
 public class CalculatorParser {
     private StreamTokenizer st;
-
-
-    
+   
     /**
      * @brief Parse a String into a valid SymbolicExpression
      * @param parseString String to be parsed
@@ -27,6 +26,7 @@ public class CalculatorParser {
 	st.ordinaryChar('/');
 	st.ordinaryChar('<');
 	st.ordinaryChar('>');
+	st.ordinaryChar('=');
 	st.eolIsSignificant(true);
 
 	try{
@@ -63,10 +63,12 @@ public class CalculatorParser {
 
     private SymbolicExpression top_level() throws IOException{
 	this.st.nextToken();
-	if(this.st.ttype == this.st.TT_WORD || this.st.sval.toLowerCase().equals("function")){
+	if(this.st.ttype == this.st.TT_WORD && this.st.sval.equals("function")){
 	    return function();
-	} else {    
+	} else {
+	    this.st.pushBack();
 	    SymbolicExpression state = statement();
+	    this.st.nextToken();
 	    if (this.st.ttype == this.st.TT_EOL || this.st.ttype == this.st.TT_EOF){
 		return state;
 	    } else {
@@ -75,31 +77,66 @@ public class CalculatorParser {
 	    }
 	}
     }
-
+    
     private SymbolicExpression function() throws IOException{
 	this.st.nextToken();
-
-	if(this.st.ttype == TT_WORD){
+	if(this.st.ttype == this.st.TT_WORD){
 	    String funcName = this.st.sval;
-
-	    if(this.st.nextToken() == '('){
-		if(this.st.nextToken() != TT_NUMBER){
-
-		} else {
-		    Unexpected();
+	    this.st.nextToken();
+	    if(this.st.ttype == '('){
+		LinkedList<String> argList = new LinkedList<String>();
+		this.st.nextToken();
+		while(this.st.ttype == this.st.TT_WORD || this.st.ttype == ','){
+		    if(this.st.ttype == this.st.TT_WORD){
+			argList.add(this.st.sval);
+		    }
+		    this.st.nextToken(); 
 		}
-		
-	    } else {
-		Unexpected();
+		if(this.st.ttype == ')' && this.st.nextToken() == this.st.TT_EOF){ //EOL?
+		    LinkedList<SymbolicExpression> body = new LinkedList<SymbolicExpression>();
+		    return new FunctionDeclaration(funcName, new Sequence(argList, body));
+		} else {
+		    return Unexpected();
+		}
 	    }
-	    
+	} 
+	throw new SyntaxErrorException("Invalid function name");
+    }
+    
+    private SymbolicExpression functionCall(String functionName) throws IOException{
+	LinkedList<SymbolicExpression> argToCall = new LinkedList<SymbolicExpression>();
+	this.st.nextToken();
+	if(this.st.ttype == this.st.TT_WORD || this.st.ttype == this.st.TT_NUMBER){
+	    while(this.st.ttype == this.st.TT_WORD || this.st.ttype == this.st.TT_NUMBER || this.st.ttype == ','){
+		if(this.st.ttype == this.st.TT_WORD){
+		    argToCall.add(new Variable(this.st.sval));
+		} else if (this.st.ttype == this.st.TT_NUMBER){
+		    argToCall.add(new Constant(this.st.nval));
+		}
+		this.st.nextToken();
+	    }
+	    if(this.st.ttype == ')'){
+		return new FunctionCall(argToCall, functionName);
+
+	    } else {
+		throw new SyntaxErrorException("Invalid function call"); 
+	    }
 	} else {
-	    Unexpected();
+	    throw new SyntaxErrorException("Invalid argument"); 
 	}
+    }    
+    private LinkedList<SymbolicExpression> body() throws IOException{
+	LinkedList<SymbolicExpression> body = new LinkedList<SymbolicExpression>();
+	this.st.nextToken();
+	while(this.st.sval != "end"){
+	    body.add(assignment());
+	    this.st.nextToken(); 	
+	}
+	return body;
     }
     
     private SymbolicExpression statement() throws IOException{
-	//this.st.nextToken();
+	this.st.nextToken();
 	if (this.st.ttype == this.st.TT_WORD){
 	    String command = this.st.sval.toLowerCase();
 	    if (command.equals("quit") || command.equals("vars") || command.equals("clear")){
@@ -140,11 +177,10 @@ public class CalculatorParser {
     private SymbolicExpression conditional() throws IOException{
 	SymbolicExpression lScope;
 	SymbolicExpression rScope;
-    
-	SymbolicExpression left = expression();
+	String operator;
 
-	String operator; 
-    
+	SymbolicExpression left = expression();
+	
 	this.st.nextToken(); 
 	switch(this.st.ttype){
 	case '<':
@@ -172,16 +208,13 @@ public class CalculatorParser {
 	    break;
 	default:
 	    throw new SyntaxErrorException("Incorrect operator");
-	} 
-	    
+	}    
 	SymbolicExpression right = expression();
-	    
 	if (this.st.ttype == '{'){
 	    lScope = primary();
 	} else {
 	    throw new SyntaxErrorException("Expected scope"); 
 	}
-
 	this.st.nextToken();
 	if(this.st.ttype == this.st.TT_WORD && this.st.sval.toLowerCase().equals("else")){
 	    this.st.nextToken();
@@ -194,20 +227,20 @@ public class CalculatorParser {
 	} else {
 	    throw new SyntaxErrorException("Expected else"); 
 	}
-	    return new Conditional(left, operator, right, (Scope)lScope, (Scope)rScope);
+	return new Conditional(left, operator, right, (Scope)lScope, (Scope)rScope);
     }
+
+    
     
     private SymbolicExpression expression() throws IOException{ 
 	this.st.nextToken();
-	    
 	if(this.st.ttype == this.st.TT_WORD && this.st.sval.toLowerCase().equals("if")){
 	    return conditional();
 	}
-	
-	this.st.pushBack();
-	
+	this.st.pushBack();	
 	SymbolicExpression sum = term();
 	this.st.nextToken();
+
 	while (this.st.ttype == '+' || this.st.ttype == '-') {
 	    if(this.st.ttype == '+'){
 		sum = new Addition(sum, term());
@@ -324,15 +357,20 @@ public class CalculatorParser {
 	    id = Character.toString(this.st.ttype);
 	} else {
 	    id = this.st.sval;
-	}
+	} 
+	
 	String id_lower = id.toLowerCase();
-	if (id_lower.equals("sin") || id_lower.equals("cos") || id_lower.equals("log") || id_lower.equals("exp") || id_lower.equals("vars") || id_lower.equals("quit") || id_lower.equals("clear") || id_lower.equals("if") || id_lower.equals("else")){
+	if (id_lower.equals("sin") || id_lower.equals("cos") || id_lower.equals("log") || id_lower.equals("exp") ||
+	    id_lower.equals("vars") || id_lower.equals("quit") || id_lower.equals("clear") || id_lower.equals("if") || id_lower.equals("else")){
 	    throw new SyntaxErrorException("Invalid identifier");
 	}
 	if (Constants.namedConstants.containsKey(id)){
 	    return new NamedConstant(id);
-	} else {
+	} else if (this.st.nextToken() != '(') {
+	    this.st.pushBack();
 	    return new Variable(id);
+	} else {
+	    return functionCall(id);
 	}
     }
 }

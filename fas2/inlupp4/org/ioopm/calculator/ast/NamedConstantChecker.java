@@ -135,7 +135,7 @@ public class NamedConstantChecker implements Visitor {
 
 
      public SymbolicExpression visit(Sequence s) {
-	 LinkedList<SymbolicExpression> funcList =  s.getFuncList();
+	 LinkedList<SymbolicExpression> funcList =  s.getBody();
 	 
 	 for(SymbolicExpression func : funcList){
 	     func.accept(this);

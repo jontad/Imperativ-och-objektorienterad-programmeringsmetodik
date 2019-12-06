@@ -127,7 +127,7 @@ public class ReassignmentChecker implements Visitor {
 
     
 
-     public SymbolicExpression visit(FunctionCall f) {
+    public SymbolicExpression visit(FunctionCall f) {
 	String id = f.getIdentifier();
 	if(funcEnv.containsKey(id)){
 	    Sequence seq = funcEnv.get(id);
@@ -139,23 +139,23 @@ public class ReassignmentChecker implements Visitor {
     }
 
 
-     public SymbolicExpression visit(FunctionDeclaration f) {
-	 Sequence seq =  f.getSequence();
-	 seq.accept(this);
-	 return f;
-     }
+    public SymbolicExpression visit(FunctionDeclaration f) {
+	Sequence seq =  f.getSequence();
+	seq.accept(this);
+	return f;
+    }
 
 
-     public SymbolicExpression visit(Sequence s) {
-	 Environment localEnv = new Environment();
-	 LinkedList<SymbolicExpression> funcList =  s.getFuncList();
+    public SymbolicExpression visit(Sequence s) {
+	Environment localEnv = new Environment();
+	LinkedList<SymbolicExpression> funcList =  s.getBody();
 
-	 usedVariables.push(localEnv);
-	 for(SymbolicExpression func : funcList){
-	     func.accept(this);
-	 }
-	 usedVariables.pop();
-	 return s;
-     }
+	usedVariables.push(localEnv);
+	for(SymbolicExpression func : funcList){
+	    func.accept(this);
+	}
+	usedVariables.pop();
+	return s;
+    }
 
 }

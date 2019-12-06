@@ -2,6 +2,8 @@ package org.ioopm.calculator;
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.parser.*;
 
+import java.util.LinkedList;
+
 import java.util.Scanner;
 
 /**
@@ -16,7 +18,7 @@ public class Calculator {
     public static void main(String args[]){
 	final CalculatorParser parser = new CalculatorParser();
         final Environment env = new Environment();
-	final EvaluationVisitor evaluator = new EvaluationVisitor(); //kanske nere?
+	final EvaluationVisitor evaluator = new EvaluationVisitor(); 
 	
 	Scanner scan = new Scanner(System.in);
 
@@ -46,8 +48,22 @@ public class Calculator {
 			final ReassignmentChecker reassCheck =  new ReassignmentChecker(evaluator.getFuncEnv());
 
 			if(checker.check(topLevel) && reassCheck.check(topLevel)) {
-			   
+			    if (topLevel instanceof FunctionDeclaration) {
+				FunctionDeclaration funcDec = (FunctionDeclaration) topLevel;
+				LinkedList<SymbolicExpression> body = funcDec.getSequence().getBody();
+				String line = "notEnd";
+				while (!line.equals("end")) {
+				    System.out.print(">");
+				    line = scan.nextLine();
+				    SymbolicExpression lineInFunction = parser.parse(line);
+				    if(!line.equals("end")){
+					body.add(lineInFunction);
+				    }
+				}
+			    }
+			    
 			    final SymbolicExpression result = evaluator.evaluate(topLevel, env);
+				
 			    System.out.println(result);
 
 			    env.put(new Variable("ans"), result);
