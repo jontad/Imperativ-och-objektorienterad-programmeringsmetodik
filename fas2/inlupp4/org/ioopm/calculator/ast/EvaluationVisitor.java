@@ -183,17 +183,17 @@ public class EvaluationVisitor implements Visitor {
     }
 
     
-    private void insertArgs(Sequence seq, LinkedList<String> argFunc, LinkedList<SymbolicExpression> argFuncCall){
-	LinkedList<SymbolicExpression> body = seq.getBody();
+    private LinkedList<SymbolicExpression> insertArgs(LinkedList<String> argFunc, LinkedList<SymbolicExpression> argFuncCall){
+	LinkedList<SymbolicExpression> assArgs = new LinkedList<SymbolicExpression>();
 	
 	int argCall =  argFuncCall.size();
-	for(int i = 0; i < argCall ; i ++){
+	for(int i = 0; i < argCall ; i++){
 	    SymbolicExpression expr = argFuncCall.get(i);
 	    if (expr.isConstant() || expr.isVariable()) {
-		expr.accept(this);
-		if(expr.isConstant()){
+		SymbolicExpression result = expr.accept(this);
+		if(result.isConstant()){
 		    SymbolicExpression newVar =  new Variable(argFunc.get(i));
-		    body.addFirst(new Assignment(expr,newVar));
+		    assArgs.addFirst(new Assignment(result,newVar));
 		} else {
 		    throw new IllegalExpressionException("Variable is not assigned.");
 		}
@@ -201,6 +201,7 @@ public class EvaluationVisitor implements Visitor {
 		throw new IllegalExpressionException("Argument is not a constant or an identifier.");
 	    }
 	}
+	return assArgs;
     }
 
     public SymbolicExpression visit(FunctionDeclaration n) {
@@ -233,9 +234,14 @@ public class EvaluationVisitor implements Visitor {
 		throw new IllegalExpressionException("Error, function '" + id + "' called with too few arguments. Expected "
 						     + argSeq + ", got " + argCall);
 	    } else {
+		LinkedList<SymbolicExpression> assArgs = insertArgs(argFunc, argFuncCall);
 		stack.push(localEnv);
-		insertArgs(body, argFunc, argFuncCall);
+
+		for(SymbolicExpression assignment : assArgs){
+		    assignment.accept(this);
+		}
 		SymbolicExpression result = body.accept(this);
+
 		stack.pop();
 		return result;
 	    }

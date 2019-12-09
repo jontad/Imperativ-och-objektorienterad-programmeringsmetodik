@@ -128,14 +128,11 @@ public class ReassignmentChecker implements Visitor {
     
 
     public SymbolicExpression visit(FunctionCall f) {
-	String id = f.getIdentifier();
-	if(funcEnv.containsKey(id)){
-	    Sequence seq = funcEnv.get(id);
-	    seq.accept(this);
-	} else {
-	    throw new IllegalExpressionException("Function does not exist");
-	}
-	return f;
+	LinkedList<SymbolicExpression> argToCall = f.getArgFuncCall();
+	 for(SymbolicExpression arg : argToCall){
+	     arg.accept(this); 
+	 }
+	 return f;
     }
 
 

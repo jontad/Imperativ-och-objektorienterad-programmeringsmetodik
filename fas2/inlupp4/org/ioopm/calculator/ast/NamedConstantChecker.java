@@ -50,7 +50,7 @@ public class NamedConstantChecker implements Visitor {
     }
 
     public SymbolicExpression visit(Multiplication m) {
-        m.getLhs().accept(this);
+        m.getLhs().accept(this); 
         m.getRhs().accept(this);
         return m;
     }
@@ -104,27 +104,24 @@ public class NamedConstantChecker implements Visitor {
     }
 
     public SymbolicExpression visit(Scope s) {
-	s.getExpr().accept(this);
+	s.getExpr().accept(this); 
 	return s;
     }
 
     public SymbolicExpression visit(Conditional c) {
-	c.getLeftScope().accept(this);
+	c.getLeftScope().accept(this); 
 	c.getRightScope().accept(this);
 	return c;
     }
 
 
      public SymbolicExpression visit(FunctionCall f) {
-	String id = f.getIdentifier();
-	if(funcEnv.containsKey(id)){
-	    Sequence seq = funcEnv.get(id);
-	    seq.accept(this);
-	} else {
-	    throw new IllegalExpressionException("Function does not exist");
-	}
-	return f;
-    }
+	 LinkedList<SymbolicExpression> argToCall = f.getArgFuncCall();
+	 for(SymbolicExpression arg : argToCall){
+	     arg.accept(this); 
+	 }
+	 return f;
+     }
 
 
      public SymbolicExpression visit(FunctionDeclaration f) {
@@ -138,7 +135,7 @@ public class NamedConstantChecker implements Visitor {
 	 LinkedList<SymbolicExpression> funcList =  s.getBody();
 	 
 	 for(SymbolicExpression func : funcList){
-	     func.accept(this);
+	     func.accept(this); 
 	 }
 	 return s;
      }
