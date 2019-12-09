@@ -189,14 +189,12 @@ public class EvaluationVisitor implements Visitor {
 	int argCall =  argFuncCall.size();
 	for(int i = 0; i < argCall ; i++){
 	    SymbolicExpression expr = argFuncCall.get(i);
-	    if (expr.isConstant() || expr.isVariable()) {
-		SymbolicExpression result = expr.accept(this);
-		if(result.isConstant()){
-		    SymbolicExpression newVar =  new Variable(argFunc.get(i));
-		    assArgs.addFirst(new Assignment(result,newVar));
-		} else {
-		    throw new IllegalExpressionException("Variable is not assigned.");
-		}
+	    SymbolicExpression result = expr.accept(this);
+	    if(result.isConstant()){
+		SymbolicExpression newVar =  new Variable(argFunc.get(i));
+		assArgs.addFirst(new Assignment(result,newVar));
+	    } else if (result.isVariable()){
+		throw new IllegalExpressionException("Variable is not assigned.");
 	    } else {
 		throw new IllegalExpressionException("Argument is not a constant or an identifier.");
 	    }
