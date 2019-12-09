@@ -1,8 +1,19 @@
 
+
+all:
+	find org/ioopm/calculator/ |grep .java|xargs javac -d classes
+
+run:
+	java -cp classes org.ioopm.calculator.Calculator
+
+clean:
+	rm -rf classes; rm *.class
+
+
 comp:
 	javac TestSuite.java
 
-run:	comp
+test:	comp
 	java org.junit.runner.JUnitCore TestSuite
 
 text: 
@@ -14,15 +25,5 @@ diff:	text
 
 rm:
 	rm org/ioopm/calculator/ast/*.java~
+	rm org/ioopm/calculator/parser/*.java~
 	rm org/ioopm/calculator/*.java~	
-
-
-
-all:
-	find org/ioopm/calculator/ |grep .java|xargs javac -d classes
-
-calculatorRun:
-	java -cp classes org.ioopm.calculator.Calculator
-
-clean:
-	rm -rf classes; rm *.class
