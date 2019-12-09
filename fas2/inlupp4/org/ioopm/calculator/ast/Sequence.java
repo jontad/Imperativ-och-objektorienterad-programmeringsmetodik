@@ -6,8 +6,7 @@ import java.util.LinkedList;
  * @author Elias Insulander, Jonathan Tadese 
  * @date 29-11-2019
  * @class Sequence
- * @brief Class that contains body and parameters of function. 
- * Works in tandem with class FunctionDeclaration and FunctionCall.
+ * @brief Class that contains body of function
  */
 
 public class Sequence extends SymbolicExpression{
