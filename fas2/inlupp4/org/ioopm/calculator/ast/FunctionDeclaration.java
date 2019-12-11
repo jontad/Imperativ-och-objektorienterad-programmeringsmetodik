@@ -5,8 +5,7 @@ package org.ioopm.calculator.ast;
  * @author Elias Insulander, Jonathan Tadese 
  * @date 29-11-2019
  * @class FunctionDeclaration
- * @brief Class that keeps track of name of function. 
- * Works in tandem with class Sequence and FunctionCall.
+ * @brief Class used to declare function
  */
  
 public class FunctionDeclaration extends SymbolicExpression{
@@ -18,6 +17,10 @@ public class FunctionDeclaration extends SymbolicExpression{
 	this.body = body;
     }
 
+// **************************************************
+// Public methods
+// **************************************************
+    
     /**
      * @brief Get-method used to retrieve name of function  
      * @return Name of function

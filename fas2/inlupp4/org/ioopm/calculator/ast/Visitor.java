@@ -1,5 +1,11 @@
 package org.ioopm.calculator.ast;
 
+/**
+ * @file Visitor.java 
+ * @author Elias Insulander, Jonathan Tadese 
+ * @date 29-11-2019
+ * @brief Common interface which contains methods for visiting classes in the AST.
+ */
 public interface Visitor {
     public SymbolicExpression visit(Addition n);
     public SymbolicExpression visit(Assignment n);

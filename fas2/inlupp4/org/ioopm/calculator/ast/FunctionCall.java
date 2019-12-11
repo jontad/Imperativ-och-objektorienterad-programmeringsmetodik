@@ -6,8 +6,7 @@ import java.util.LinkedList;
  * @author Elias Insulander, Jonathan Tadese 
  * @date 29-11-2019
  * @class FunctionCall
- * @brief Class that consists of an identifier and list of arguments.
- * Works in tandem with class Sequence and FunctionDeclaration.
+ * @brief Class that calls function with function (i.e. factorial(2))
  */
 
 public class FunctionCall extends SymbolicExpression{

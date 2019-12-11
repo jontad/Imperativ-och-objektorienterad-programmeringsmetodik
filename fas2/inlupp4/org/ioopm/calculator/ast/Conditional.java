@@ -60,8 +60,13 @@ public class Conditional extends SymbolicExpression{
     public SymbolicExpression getRight() {return this.right;}
     
   
-
-     public boolean compareConstants(double leftCon, double rightCon){
+    /**
+     * @brief Comparison between two constant
+     * @param leftCon Left constant that is compared
+     * @param rightCon Right constant that is compared
+     * @return Result of comparison
+     */
+    public boolean compareConstants(double leftCon, double rightCon){
 	switch(this.op){
 	case "<":
 	    return leftCon < rightCon;
@@ -76,14 +81,13 @@ public class Conditional extends SymbolicExpression{
 	default:
 	    return false;
 	}
-     }
+    }
 
         
     /**
      * @brief Creates String representation of if-else statement
      * @return String version of if-else statement
      */
-
     public String toString() {
 	return "if " + left + " " + op + " " + right + " " + leftScope + " else " + rightScope;
     }
