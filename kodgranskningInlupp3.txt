@@ -1,0 +1,58 @@
+KODGRANSKNING INLUPP 3 (Emanuel Jansson, Fredrik Yngve)
+
+------------------ STRUKTUR--------------------
+
+✷ Är koden välstrukturerad samt stilistiskt och formatteringsmässigt konsekvent?
+- Ja
+
+✷ Finns det “död kod” eller metoder/rutiner som inte anropas eller behövs?
+- Använde super() i t.ex. Binary eller Unary. Hitta inget mer.
+
+✷ Finns det block av (mer eller mindre) upprepad kod som kunde extraheras och kapslas in i en metod?
+- Hittar inget. De flesta metoderna är korta och säregna.
+
+✷ Används symboler istället för ”magiska nummer” eller strängkonstanter?
+- Ja (om då inte jämförelese av karaktärer och vissa uttryck som sin eller quit räknas).
+
+✷ Finns det klasser/metoder som är väldigt omfattande och/eller komplicerade och borde brytas upp i fler mindre klasser/metoder/rutiner?
+- Enda metoden som är lite omfattade är factor() i CalculatorParser.java. Den är dock väldigt välformaterad och lätt att förstå. All kod är också väldigt bunden till funktionen.
+
+------------------ VARIABLER -------------------------
+✷ Har alla variabler definierats med vettiga namn som är meningsfulla, tydliga och konsekventa?
+- Variabelnamnen var väldigt allmänna vilket kanske kan vara lite förvirrande. Vad variablerna kan vara dock är väldigt allmänt så är ok.
+
+✷ Initieras alla variabler med vettiga värden?
+  - Ja. (SymbolicExpression s = null)
+  
+✷ Finns det redundanta variabler eller variabler som inte används?
+- Hittar inga
+------------------ LOOPAR OCH VILLKORSATSER -------------
+
+* Är alla loopar, villkorssatser och logiska uttryck kompletta, korrekta och korrekt nästlade?
+- Ja
+
+✷ Testas de vanligaste fallen först i if . . . elseif . . . -kjedor?
+- Hittar inga fall som har precedence över andra, så spelar ingen roll
+
+✷ Har alla case-satser en default-klausul?
+- Används ej
+
+✷ Är villkoren för loopars terminering uppenbara och alltid uppnåeliga?
+- Ja
+✷ Initieras indexeringsvariabler korrekt innan de loopar där de används?
+- Ja
+✷ Finns det uttryck och satser inuti loopar som kunde brytas ut och placeras utanför loopen?
+- Hittar inga
+
+------------------- DEFENSIV PROGRAMMERING -------------------------
+✷ Testas indexeringsvariabler och pekare korrekt mot gränsvärdena för arrayer, listor, etc.?
+- Ja
+
+✷ Kontrolleras att indata (från filer, terminalen, etc.) är valida och komplett?
+- Ja
+
+✷ Städas minne (alt. referenser) till allt allokerat data bort korrekt?
+- Java
+
+✷ Kontrolleras att filer som programmet öppnar existerar innan programmet gör åtkomst till dem?
+- Öppnar inte filer
