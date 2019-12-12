@@ -49,6 +49,7 @@ public class EvaluationVisitor implements Visitor {
 	SymbolicExpression right = n.getRhs().accept(this);
 
 	if (left.isConstant() && right.isConstant()) {
+	    
 	    return new Constant(left.getValue() + right.getValue());
 	} else {
 	    return new Addition(left, right);
@@ -307,6 +308,11 @@ public class EvaluationVisitor implements Visitor {
      */   
     public SymbolicExpression visit(FunctionDeclaration n) {
 	String funcName = n.getNameOfFunc();
+	String func_low = funcName.toLowerCase();
+	if(func_low.equals("quit") || func_low.equals("clear") || func_low.equals("vars")){
+	    throw new IllegalExpressionException("Command as function name is not allowed");
+	}
+	
 	Sequence seq = n.getSequence();
 
 	funcEnv.put(funcName, seq);
@@ -314,6 +320,8 @@ public class EvaluationVisitor implements Visitor {
 	return new Variable("");
     }
 
+    
+    
     /**
      * @brief Used to call function with arguments 
      * @param n FunctionCall that will be evaluated          
@@ -361,8 +369,8 @@ public class EvaluationVisitor implements Visitor {
      */   
     public SymbolicExpression visit(Sequence n) {
 	LinkedList<SymbolicExpression> body = n.getBody();
-    
-	int counter = 1;
+
+       	int counter = 1;
 	for(SymbolicExpression lineInFunc : body){
 	    lineInFunc.accept(this);
 

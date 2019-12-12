@@ -55,12 +55,19 @@ public class Calculator {
 				while (!line.equals("end")) {
 				    System.out.print(">");
 				    line = scan.nextLine();
-				    SymbolicExpression lineInFunction = parser.parse(line);
-				    if(!line.equals("end")){
-					body.add(lineInFunction);
+				  					
+					if(!line.equals("end")){
+					    SymbolicExpression lineInFunction = parser.parse(line);
+					    if(lineInFunction instanceof Command){
+						throw new IllegalExpressionException("Attempt to add Command to function body");
+					    }
+
+					    body.add(lineInFunction);
+					    
+					}
+				
 				    }
 				}
-			    }
 			    
 			    final SymbolicExpression result = evaluator.evaluate(topLevel, env);
 				

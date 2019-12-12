@@ -2,6 +2,7 @@ import org.junit.Test;
 import junit.framework.TestCase;
 import static org.junit.Assert.assertEquals;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import org.ioopm.calculator.parser.*;
 import org.ioopm.calculator.ast.*;
@@ -21,8 +22,7 @@ public class TestSuite extends TestCase {
 	    assertTrue(false);
 	} catch(RuntimeException e) {
 	    assertTrue(true);
-	}
-	
+	}	
     }
 
     //isConstant()
@@ -552,5 +552,86 @@ public class TestSuite extends TestCase {
 	    assertEquals(e.getMessage(), "Expected scope");
 	}
     }
-    
+
+    //Function declaration and function call
+    @Test
+    public void testFunction() {
+	CalculatorParser parser = new CalculatorParser();
+	final EvaluationVisitor evaluator = new EvaluationVisitor();
+	Environment env = new Environment();
+
+	
+	//gcd
+        SymbolicExpression functionDeclaration = parser.parse("function gcd(a, b)");
+	FunctionDeclaration funcDec = (FunctionDeclaration) functionDeclaration;
+	LinkedList<SymbolicExpression> functionBody = funcDec.getSequence().getBody();
+	
+	SymbolicExpression functionLine1 = parser.parse("b - a = ba");
+	SymbolicExpression functionLine2 = parser.parse("a - b = ab");
+	SymbolicExpression functionLine3 = parser.parse("if a == b { a } else { if a < b { gcd(a, ba) } else { gcd(ab, b) } }");
+	functionBody.add(functionLine1);
+	functionBody.add(functionLine2);
+	functionBody.add(functionLine3);
+	
+	evaluator.evaluate(functionDeclaration, env);
+
+	SymbolicExpression functionCall = parser.parse("gcd(55, 94)");
+	
+	SymbolicExpression result = evaluator.evaluate(functionCall, env);
+	assertEquals(result.toString(), "1.0");
+
+
+	//max
+        functionDeclaration = parser.parse("function max(x, y)");
+        funcDec = (FunctionDeclaration) functionDeclaration;
+        functionBody = funcDec.getSequence().getBody();
+	
+        functionLine1 = parser.parse("if x < y { y } else { x }");
+	functionBody.add(functionLine1);
+	
+	evaluator.evaluate(functionDeclaration, env);
+
+	functionCall = parser.parse("max(2, 94)");
+	
+	result = evaluator.evaluate(functionCall, env);
+	assertEquals(result.toString(), "94.0");
+
+
+	//factorial
+        functionDeclaration = parser.parse("function factorial(n)");
+        funcDec = (FunctionDeclaration) functionDeclaration;
+        functionBody = funcDec.getSequence().getBody();
+
+	
+        functionLine1 = parser.parse("n - 1 = m");
+	functionLine2 = parser.parse("if n > 1 { factorial(m) * n } else { 1 }");
+	functionBody.add(functionLine1);
+	functionBody.add(functionLine2);
+	
+	evaluator.evaluate(functionDeclaration, env);
+
+	functionCall = parser.parse("factorial(6)");
+	
+	result = evaluator.evaluate(functionCall, env);
+	assertEquals(result.toString(), "720.0");
+
+
+	//error handling
+	try {
+	    SymbolicExpression parsedFuncDec = parser.parse("function");
+	    result = evaluator.evaluate(parsedFuncDec, env);
+	} catch (SyntaxErrorException e){
+	    assertEquals(e.getMessage(), "Invalid function name");
+	} try {
+	    SymbolicExpression parsedFuncDec = parser.parse("function hej");
+	    result = evaluator.evaluate(parsedFuncDec, env);
+	} catch (SyntaxErrorException e){
+	    assertEquals(e.getMessage(), "Invalid declaration: Expected '()'");
+	} try {
+	    SymbolicExpression parsedFuncDec = parser.parse("function hej(x");
+	    result = evaluator.evaluate(parsedFuncDec, env);
+	} catch (SyntaxErrorException e){
+	    assertEquals(e.getMessage(), "Unexpected: EOF");
+	}
+    }
 }

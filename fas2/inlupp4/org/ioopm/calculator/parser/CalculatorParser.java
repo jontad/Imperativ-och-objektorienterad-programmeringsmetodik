@@ -88,30 +88,49 @@ public class CalculatorParser {
 		this.st.nextToken();
 		while(this.st.ttype == this.st.TT_WORD || this.st.ttype == ','){
 		    if(this.st.ttype == this.st.TT_WORD){
+			String id = this.st.sval.toLowerCase();
+			if(id.equals("quit") || id.equals("clear") || id.equals("vars")
+			   || id.equals("if") || id.equals("else") || id.equals("end")){
+			    throw new SyntaxErrorException("Command(s) or if-else statements are not valid argument names");
+			}
 			argList.add(this.st.sval);
 		    }
 		    this.st.nextToken(); 
 		}
-		if(this.st.ttype == ')' && this.st.nextToken() == this.st.TT_EOF){ //EOL?
+		if(this.st.ttype == ')' && this.st.nextToken() == this.st.TT_EOF){ 
 		    LinkedList<SymbolicExpression> body = new LinkedList<SymbolicExpression>();
 		    return new FunctionDeclaration(funcName, new Sequence(argList, body));
 		} else {
 		    return Unexpected();
 		}
+	    } else {
+		throw new SyntaxErrorException("Invalid declaration: Expected '()'");
 	    }
 	} 
 	throw new SyntaxErrorException("Invalid function name");
     }
     
+    
     private SymbolicExpression functionCall(String functionName) throws IOException{
 	LinkedList<SymbolicExpression> argToCall = new LinkedList<SymbolicExpression>();
 	this.st.nextToken();
-	if(this.st.ttype == this.st.TT_WORD || this.st.ttype == this.st.TT_NUMBER){
-	    while(this.st.ttype == this.st.TT_WORD || this.st.ttype == this.st.TT_NUMBER || this.st.ttype == ','){
+	if (this.st.ttype == ')') {
+	    return new FunctionCall(argToCall, functionName);
+	} else if(this.st.ttype == this.st.TT_WORD || this.st.ttype == this.st.TT_NUMBER || this.st.ttype == '-'){
+	    while(this.st.ttype == this.st.TT_WORD || this.st.ttype == this.st.TT_NUMBER
+		  || this.st.ttype == ',' || this.st.ttype == '-'){
+
 		if(this.st.ttype == this.st.TT_WORD){
 		    argToCall.add(new Variable(this.st.sval));
 		} else if (this.st.ttype == this.st.TT_NUMBER){
 		    argToCall.add(new Constant(this.st.nval));
+		} else if(this.st.ttype == '-'){
+		    this.st.nextToken();
+		    if (this.st.ttype == this.st.TT_NUMBER){
+			argToCall.add(new Negation(new Constant(this.st.nval)));
+		    } else {
+			throw new SyntaxErrorException("Only supports negative constants"); 
+		    }
 		}
 		this.st.nextToken();
 	    }
@@ -361,7 +380,8 @@ public class CalculatorParser {
 	
 	String id_lower = id.toLowerCase();
 	if (id_lower.equals("sin") || id_lower.equals("cos") || id_lower.equals("log") || id_lower.equals("exp") ||
-	    id_lower.equals("vars") || id_lower.equals("quit") || id_lower.equals("clear") || id_lower.equals("if") || id_lower.equals("else")){
+	    id_lower.equals("vars") || id_lower.equals("quit") || id_lower.equals("clear") || id_lower.equals("if")
+	    || id_lower.equals("else") || id_lower.equals("function") || id_lower.equals("end")){
 	    throw new SyntaxErrorException("Invalid identifier");
 	}
 	if (Constants.namedConstants.containsKey(id)){

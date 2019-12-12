@@ -18,4 +18,6 @@ x + a + c = i
 i * i * i
 pi + 3 * 4 / 2
 45 = e
-quit 
+vars
+(3 = x) + (4 = x)
+quit
